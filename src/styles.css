@@ -1,1 +1,78 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #e0f2f1, #b2dfdb);
+  color: #064e3b;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Form controls */
+.form-control {
+  border: 2px solid #00796b;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #00bfa5;
+  box-shadow: 0 0 8px #00bfa5aa;
+  outline: none;
+}
+
+label {
+  font-weight: 600;
+  color: #064e3b;
+}
+
+/* Submit buttons */
+
+button {
+  background-color: #00796b;
+  color: #a7ffeb;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 1.25rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  user-select: none;
+}
+
+button:hover {
+  background-color: #004d40;
+}
+
+ ------------
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid #00796b;
+  font-size: 1rem;
+  color: #064e3b;
+  background-color: #e0f2f1;
+  transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  outline: none;
+  border-color: #00bfa5;
+  box-shadow: 0 0 8px #00bfa5cc;
+  background-color: #ffffff;
+}

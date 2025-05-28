@@ -1,0 +1,11 @@
+<div class="auth-container" role="main">
+  <section class="auth-info" aria-label="About GreenAgro">
+    <div class="logo" aria-hidden="true">🌿</div>
+    <h2>Green Agro</h2>
+    <p>Система за оптимизирано напояване и грижа за селскостопански култури.</p>
+  </section>
+  <section class="auth-forms" aria-label="User authentication forms">
+    <app-login *ngIf="login" (formSubmit)="authFormSubmit($event)" (toggleForm)="onToggleForm()"/>
+    <app-register *ngIf="!login" (formSubmit)="authFormSubmit($event)" (toggleForm)="onToggleForm()"/>
+  </section>
+</div>
