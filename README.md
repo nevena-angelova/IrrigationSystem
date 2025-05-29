@@ -1,6 +1,6 @@
 # IrrigationSystem
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.13.
+This project uses Java 21, Spring Boot 3.4.5 for back end and for front end [Angular CLI](https://github.com/angular/angular-cli) version 19.2.13.
 
 ## Development server
 
