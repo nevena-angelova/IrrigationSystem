@@ -7,7 +7,7 @@ public enum MeasureTypeEnum {
 
     private final int value;
 
-    private MeasureTypeEnum(int value) {
+    MeasureTypeEnum(int value) {
         this.value = value;
     }
 

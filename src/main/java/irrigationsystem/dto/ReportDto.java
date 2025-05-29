@@ -15,15 +15,18 @@ public class ReportDto {
 
     private double maxHumidity;
 
+    private String growthPhase;
+
     private List<String> warnings;
 
-    public ReportDto(Long cropId, double humidity, double minHumidity, double maxHumidity) {
+    public ReportDto(Long cropId, double humidity, double minHumidity, double maxHumidity, String growthPhase) {
         this.cropId = cropId;
         this.needsIrrigation = false;
         this.warnings = new ArrayList<>();
         this.humidity = humidity;
         this.minHumidity = minHumidity;
         this.maxHumidity = maxHumidity;
+        this.growthPhase = growthPhase;
     }
 
     public boolean getNeedsIrrigation() {
@@ -72,5 +75,13 @@ public class ReportDto {
 
     public double getMaxHumidity() {
         return maxHumidity;
+    }
+
+    public String getGrowthPhase() {
+      return growthPhase;
+    }
+
+    public void setGrowthPhase(String growthPhase) {
+      this.growthPhase = growthPhase;
     }
 }
