@@ -19,9 +19,9 @@
   <article *ngFor="let crop of crops" class="card">
     <div class="crop-icon" aria-hidden="true">{{ crop.icon }}</div>
     <h3 class="crop-name">{{ crop.cropType.name }}</h3>
-    <p class="growth-stage">В цъфтеж</p>
+    <p *ngIf="hasReport(crop)" class="growth-stage">{{ crop.report.growthPhase }}</p>
     <p class="planting-date">Засаждане: {{ crop.plantingDate | date: 'dd.MM.yyyy' }}</p>
-    <p class="humidity">Влажност: {{ crop.report?.humidity | number:'1.1-1' }}</p>
+    <p *ngIf="hasReport(crop)"  class="humidity">Влажност: {{ crop.report.humidity | number:'1.1-1' }}</p>
     <p *ngIf="needsIrrigation(crop)" class="needs-irrigation">Нужно е поливане</p>
     <div *ngIf="hasWarnings(crop)" class="warning">
       <p *ngFor="let warning of crop.report.warnings">
@@ -29,6 +29,7 @@
         <span>{{ warning }}</span>
       </p>
     </div>
-    <app-ring *ngIf="hasReport(crop)" [min]="getMinHumidity(crop)" [max]="getMaxHumidity(crop)" [current]="getHumidity(crop)"></app-ring>
+    <app-ring *ngIf="hasReport(crop)" [min]="getMinHumidity(crop)" [max]="getMaxHumidity(crop)"
+              [current]="getHumidity(crop)"></app-ring>
   </article>
 </section>

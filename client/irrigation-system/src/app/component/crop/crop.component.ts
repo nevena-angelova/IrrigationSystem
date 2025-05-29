@@ -28,7 +28,15 @@ export class CropComponent implements OnInit {
   selectedDate: Date = new Date();
   crops: Crop[] = [];
   reportSubscription: Subscription | undefined;
-  report: Report = {cropId: 0, needsIrrigation: false, warnings: [], humidity: 0, maxHumidity: 0, minHumidity: 0};
+  report: Report = {
+    cropId: 0,
+    needsIrrigation: false,
+    warnings: [],
+    humidity: 0,
+    maxHumidity: 0,
+    minHumidity: 0,
+    growthPhase: ''
+  };
 
   constructor(private cropService: CropService, private cdRef: ChangeDetectorRef, private webSocketService: WebSocketService) {
   }

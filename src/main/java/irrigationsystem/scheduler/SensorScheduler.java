@@ -78,7 +78,7 @@ public class SensorScheduler  {
 
         // Bulk save data in database
 
-        //sensorDataRepository.saveAll(data);
+        sensorDataRepository.saveAll(data);
     }
 
 

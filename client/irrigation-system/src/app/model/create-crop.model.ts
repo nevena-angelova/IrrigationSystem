@@ -1,4 +1,4 @@
 export interface CreateCrop {
-  cropTypeId: number;
-  plantingDate: Date;
+    cropTypeId: number;
+    plantingDate: Date;
 }

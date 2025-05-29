@@ -1,0 +1,39 @@
+/* Circular progress ring */
+.progress-ring {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1rem;
+}
+
+.progress-ring svg {
+    transform: rotate(-90deg);
+    width: 120px;
+    height: 120px;
+}
+
+.progress-ring circle {
+    fill: transparent;
+    stroke-width: 12;
+    stroke-linecap: round;
+}
+
+.progress-ring .bg {
+    stroke: #b2dfdb;
+}
+
+.progress-ring .fg {
+    stroke: #00796b;
+    transition: stroke-dashoffset 0.6s ease;
+}
+
+.progress-ring-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #004d40;
+    user-select: none;
+}
