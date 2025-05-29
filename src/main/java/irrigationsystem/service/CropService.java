@@ -68,6 +68,11 @@ public class CropService {
 
         Map<Long, List<MeasureValuesDto>> measuresByCrop = new HashMap<>();
 
+        /*
+        groups measure data by crop id
+        each group will have crop -> { measure type 1 data, measure type 2 data ...}
+        for types like temperature, humidity and pressure
+        */
         for (var measure : measures) {
             if (!measuresByCrop.containsKey(measure.getCropId())) {
                 List<MeasureValuesDto> list = new ArrayList<>();
@@ -80,6 +85,8 @@ public class CropService {
 
         List<CropDto> crops = new ArrayList<>();
 
+        // get measure values for each group
+
         for (var group : measuresByCrop.entrySet()) {
             Map<MeasureTypeEnum, Double> measureValues = new HashMap<>();
             for (var measure : group.getValue()) {
@@ -87,6 +94,7 @@ public class CropService {
                 measureValues.put(measureType, measure.getValue());
             }
 
+            // each group values has same crop data so take first item
             var first = group.getValue().getFirst();
 
             var cropType = CropTypeEnum.getValue(first.getCropTypeId());

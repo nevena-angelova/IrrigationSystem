@@ -1,5 +1,11 @@
 package irrigationsystem.sensor.reader;
 
+/*
+Represents a base class for simulated sensor reader that
+generates random values in some interval. This min - max
+interval is different for each successor
+ */
+
 public abstract class SensorReader {
     protected double minValue;
     protected double maxValue;
@@ -7,7 +13,7 @@ public abstract class SensorReader {
     public SensorReader() {
     }
 
-    public double read(){
+    public double read() {
         return generateRandomData();
     }
 

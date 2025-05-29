@@ -4,6 +4,14 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+/*
+
+Base class that represents plant lifecycle.
+The lifecycle consists of several phases.
+The current phase is determined by the crop planting date.
+
+*/
+
 public abstract class Lifecycle {
 
     protected abstract List<GrowthPhase> getPhases();
