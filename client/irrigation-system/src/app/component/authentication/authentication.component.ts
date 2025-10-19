@@ -8,11 +8,11 @@ import {RegisterComponent} from './register/register.component';
 
 @Component({
   selector: 'app-authentication',
-  imports: [
-    LoginComponent,
-    NgIf,
-    RegisterComponent
-  ],
+    imports: [
+        LoginComponent,
+        NgIf,
+        RegisterComponent
+    ],
   templateUrl: './authentication.component.html',
   styleUrl: './authentication.component.css'
 })
@@ -23,7 +23,7 @@ export class AuthenticationComponent {
 
   authFormSubmit(user: User) {
     this.authenticationService.authenticate(user, this.login ? 'login' : 'register' ).subscribe({
-      next: (data) => this.router.navigate(['/crop']),
+      next: (data) => this.router.navigate(['/Plant']),
       error: (err) => console.error('Error loading data', err)
     });
   }

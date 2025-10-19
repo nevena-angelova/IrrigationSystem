@@ -1,14 +1,12 @@
 import {Routes} from '@angular/router';
-import {LoginComponent} from './component/authentication/login/login.component';
-import {RegisterComponent} from './component/authentication/register/register.component';
 import {authGuard} from './service/auth.guard';
-import {CropComponent} from './component/crop/crop.component';
+import {PlantComponent} from './component/plant/plant.component';
 import {AuthenticationComponent} from './component/authentication/authentication.component';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'crop',
+    redirectTo: 'Plant',
     pathMatch: 'full'
   },
   {
@@ -16,8 +14,8 @@ export const routes: Routes = [
     component: AuthenticationComponent
   },
   {
-    path: 'crop',
-    component: CropComponent,
+    path: 'Plant',
+    component: PlantComponent,
     canActivate: [authGuard]
   }
 ];

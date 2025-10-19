@@ -1,32 +1,40 @@
 package irrigationsystem.dto;
 
+import irrigationsystem.model.GrowthPhase;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReportDto {
 
-    private long cropId;
+    private long PlantId;
 
     private boolean needsIrrigation;
 
     private double humidity;
 
+    private String growthPhaseName;
+
+    private String growthPhaseDetails;
+
     private double minHumidity;
 
     private double maxHumidity;
 
-    private String growthPhase;
+    private int irrigationDuration;
 
     private List<String> warnings;
 
-    public ReportDto(Long cropId, double humidity, double minHumidity, double maxHumidity, String growthPhase) {
-        this.cropId = cropId;
+    public ReportDto(Long PlantId, double humidity, GrowthPhase growthPhase) {
+        this.PlantId = PlantId;
         this.needsIrrigation = false;
         this.warnings = new ArrayList<>();
         this.humidity = humidity;
-        this.minHumidity = minHumidity;
-        this.maxHumidity = maxHumidity;
-        this.growthPhase = growthPhase;
+        this.growthPhaseName = growthPhase.getName();
+        this.growthPhaseDetails = growthPhase.getDetails();
+        this.minHumidity = growthPhase.getMinHumidity();
+        this.maxHumidity = growthPhase.getMaxHumidity();
+        this.irrigationDuration = growthPhase.getIrrigationDuration();
     }
 
     public boolean getNeedsIrrigation() {
@@ -45,12 +53,12 @@ public class ReportDto {
         return warnings;
     }
 
-    public long getCropId() {
-        return cropId;
+    public long getPlantId() {
+        return PlantId;
     }
 
-    public void setCropId(long cropId) {
-        this.cropId = cropId;
+    public void setPlantId(long PlantId) {
+        this.PlantId = PlantId;
     }
 
     public double getHumidity() {
@@ -61,27 +69,45 @@ public class ReportDto {
         this.humidity = humidity;
     }
 
-    public void setMinHumidity(double minHumidity) {
-        this.minHumidity = minHumidity;
+    public String getGrowthPhaseName() {
+      return growthPhaseName;
+    }
+
+    public void getGrowthPhaseName(String growthPhase) {
+      this.growthPhaseName = growthPhaseName;
+    }
+
+    public String getGrowthPhaseDetails() {
+        return growthPhaseDetails;
+    }
+
+    public void setGrowthPhaseDetails(String growthPhaseDetails) {
+        this.growthPhaseDetails = growthPhaseDetails;
     }
 
     public double getMinHumidity() {
         return minHumidity;
     }
 
-    public void setMaxHumidity(double maxHumidity) {
-        this.maxHumidity = maxHumidity;
+    public void setMinHumidity(double minHumidity) {
+        this.minHumidity = minHumidity;
     }
 
     public double getMaxHumidity() {
         return maxHumidity;
     }
 
-    public String getGrowthPhase() {
-      return growthPhase;
+    public void setMaxHumidity(double maxHumidity) {
+        this.maxHumidity = maxHumidity;
     }
 
-    public void setGrowthPhase(String growthPhase) {
-      this.growthPhase = growthPhase;
+    public int getIrrigationDuration() {
+        return irrigationDuration;
     }
+
+    public void setIrrigationDuration(int irrigationDuration) {
+        this.irrigationDuration = irrigationDuration;
+    }
+
+
 }

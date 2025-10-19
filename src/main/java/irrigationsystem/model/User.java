@@ -1,6 +1,7 @@
 package irrigationsystem.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,13 +49,8 @@ public class User implements UserDetails {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Device> devices = new ArrayList<>();
 
     @Override
     public String getUsername() {
@@ -114,8 +110,16 @@ public class User implements UserDetails {
         this.lastName = lastName;
     }
 
+    public void setDevices(List<Device> devices) {
+        this.devices = devices;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.getName()));
+    }
+
+    public List<Device> getDevices() {
+        return devices;
     }
 }

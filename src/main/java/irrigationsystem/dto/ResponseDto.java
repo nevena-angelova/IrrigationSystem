@@ -18,7 +18,7 @@ public class ResponseDto<T> {
     @Getter
     private Optional<String> errorMessage;
 
-    private boolean hasErrors = false;
+    private boolean hasErrors;
 
     public boolean hasErrors() {
         return hasErrors;
