@@ -23,10 +23,10 @@ public class GrowthPhase {
     private String details;
 
     @Column(nullable = false)
-    private double minHumidity;
+    private double minSoilMoisture;
 
     @Column(nullable = false)
-    private double maxHumidity;
+    private double maxSoilMoisture;
 
     @ManyToOne
     @JoinColumn(name = "plant_type_id", nullable = false)
@@ -39,11 +39,11 @@ public class GrowthPhase {
     public GrowthPhase() {
     }
 
-    public GrowthPhase(int startDay, int endDay, String name, String details, double minHumidity, double maxHumidity, PlantType plantType, int irrigationDuration) {
+    public GrowthPhase(int startDay, int endDay, String name, String details, double minSoilMoisture, double maxSoilMoisture, PlantType plantType, int irrigationDuration) {
         this.name = name;
         this.details = details;
-        this.minHumidity = minHumidity;
-        this.maxHumidity = maxHumidity;
+        this.minSoilMoisture = minSoilMoisture;
+        this.maxSoilMoisture = maxSoilMoisture;
         this.startDay = startDay;
         this.endDay = endDay;
         this.plantType = plantType;
@@ -62,12 +62,12 @@ public class GrowthPhase {
         return details;
     }
 
-    public double getMinHumidity() {
-        return minHumidity;
+    public double getMinSoilMoisture() {
+        return minSoilMoisture;
     }
 
-    public double getMaxHumidity() {
-        return maxHumidity;
+    public double getMaxSoilMoisture() {
+        return maxSoilMoisture;
     }
 
     public int getStartDay() {

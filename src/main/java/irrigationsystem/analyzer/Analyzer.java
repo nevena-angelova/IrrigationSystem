@@ -5,7 +5,6 @@ import irrigationsystem.model.GrowthPhase;
 import irrigationsystem.model.MeasureTypeEnum;
 
 import java.util.Map;
-import java.util.Optional;
 
 /*
 A base class used to analyze sensor measure values
@@ -19,11 +18,11 @@ public abstract class Analyzer {
     private final GrowthPhase growthPhase;
     private ReportDto report;
 
-    public Analyzer(Long PlantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues) {
+    public Analyzer(Long plantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues) {
         this.measureValues = measureValues;
         this.growthPhase = growthPhase;
-        this.report = new ReportDto(PlantId,
-                measureValues.get(MeasureTypeEnum.Humidity),
+        this.report = new ReportDto(plantId,
+                measureValues.get(MeasureTypeEnum.SoilMoisture),
                 growthPhase
         );
     }
@@ -32,25 +31,18 @@ public abstract class Analyzer {
         return report;
     }
 
-    protected double getMinHumidity() {
-        return growthPhase.getMinHumidity();
+    protected double getSoilMoisture() { return this.measureValues.get(MeasureTypeEnum.SoilMoisture); }
+
+    protected double getMinSoilMoisture() {
+        return growthPhase.getMinSoilMoisture();
     }
 
-    protected double getMaxHumidity() {
-        return growthPhase.getMaxHumidity();
+    protected double getMaxSoilMoisture() {
+        return growthPhase.getMaxSoilMoisture();
     }
 
     protected double getTemperature() {
         return this.measureValues.get(MeasureTypeEnum.Temperature);
-    }
-
-    protected double getHumidity() {
-        return this.measureValues.get(MeasureTypeEnum.Humidity);
-    }
-
-    protected Optional<Double> getPressure() {
-        if (this.measureValues == null) return Optional.empty();
-        return Optional.ofNullable(this.measureValues.get(MeasureTypeEnum.Pressure));
     }
 
     public abstract ReportDto analyze();

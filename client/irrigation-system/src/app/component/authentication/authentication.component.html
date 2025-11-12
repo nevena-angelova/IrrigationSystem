@@ -1,6 +1,5 @@
 <div class="auth-container" role="main">
   <section class="auth-info" aria-label="About GreenAgro">
-    <h4>Система за оптимизирано напояване и грижа за селскостопански култури.</h4>
   </section>
   <section class="auth-forms" aria-label="User authentication forms">
     <app-login *ngIf="login" (formSubmit)="authFormSubmit($event)" (toggleForm)="onToggleForm()"/>

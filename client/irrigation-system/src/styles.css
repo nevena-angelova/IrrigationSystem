@@ -1,28 +1,34 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
+:root {
+  --mint-bg: #bcddc5;
+  --white: #FFFFFF;
+  --dark-text: #1F2B34;
+  --border-gray: #C4CDD5;
+  --button-dark: #1F2B34;
+  --button-hover: #172026;
+  --mint-form-bg: #e6feed;
+  --light-form-bg: #fafffb;
+}
+
 body, html {
   height: 100%;
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #e0f2f1, #b2dfdb);
-  color: #064e3b;
+  background: var(--mint-bg);
+  color: var(--dark-text);
   align-items: center;
   justify-content: center;
 }
 
 /* Form controls */
 .form-control {
-  border: 2px solid #00796b;
-  border-radius: 0.75rem;
+  border: 2px solid var(--border-gray);
+  border-radius: 0.5rem;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
-}
-
-.form-control:focus {
-  border-color: #00bfa5;
-  box-shadow: 0 0 8px #00bfa5aa;
-  outline: none;
+  transition: all 0.3s ease;
+  color: var(--dark-text);
 }
 
 label {
@@ -33,23 +39,22 @@ label {
 /* Submit buttons */
 
 button {
-  background-color: #00796b;
-  color: #a7ffeb;
+  background-color: var(--button-dark);
+  color: var(--white);
   border: none;
   padding: 0.75rem 2rem;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 1.1rem;
-  border-radius: 1.25rem;
+  border-radius: 0.5rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
   display: block;
   width: 100%;
-  max-width: 200px;
-  user-select: none;
+  margin-top: 1.25rem;
 }
 
 button:hover {
-  background-color: #004d40;
+  background-color: var(--button-hover);
 }
 
 select {
@@ -57,7 +62,7 @@ select {
   padding: 0.75rem 1rem;
   margin-top: 0.5rem;
   margin-bottom: 1.5rem;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   border: 1px solid #00796b;
   font-size: 1rem;
   color: #064e3b;
@@ -72,4 +77,15 @@ select:focus {
   border-color: #00bfa5;
   box-shadow: 0 0 8px #00bfa5cc;
   background-color: #ffffff;
+}
+
+/* Autofill fix */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px var(--white) inset !important;
+  -webkit-text-fill-color: var(--dark-text) !important;
+  border: 2px solid var(--border-gray) !important;
+  border-radius: 0.5rem;
+  transition: background-color 5000s ease-in-out 0s;
 }

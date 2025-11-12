@@ -93,7 +93,7 @@ public class PlantService {
         /*
         groups measure data by Plant id
         each group will have Plant -> { measure type 1 data, measure type 2 data ...}
-        for types like temperature, humidity and pressure
+        for types like temperature, soilMoisture and pressure
         */
         for (var measure : measures) {
             if (!measuresByPlant.containsKey(measure.getPlantId())) {
@@ -154,7 +154,7 @@ public class PlantService {
         return PlantDto;
     }
 
-    // Every Plant has a temperature, humidity and a pressure sensors attached
+    // Every Plant has a temperature, soilMoisture and a pressure sensors attached
     // Sensor has type and each type can measure one or two parameters
     private List<Sensor> getSensors(Plant Plant, Device device) {
 

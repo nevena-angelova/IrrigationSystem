@@ -91,20 +91,20 @@ export class PlantComponent implements OnInit {
     return plant.report?.warnings.length > 0;
   }
 
-  getHumidity(plant: Plant) {
-    return plant.report.humidity;
+  getSoilMoisture(plant: Plant) {
+    return plant.report.soilMoisture;
   }
 
-  getMinHumidity(plant: Plant) {
-    return plant.report.minHumidity;
+  getMinSoilMoisture(plant: Plant) {
+    return plant.report.minSoilMoisture;
   }
 
-  getMaxHumidity(plant: Plant) {
-    return plant.report.maxHumidity;
+  getMaxSoilMoisture(plant: Plant) {
+    return plant.report.maxSoilMoisture;
   }
 
-  hasReport(Plant: Plant) {
-    return Plant.report !== undefined;
+  hasReport(plant: Plant) {
+    return plant.report !== undefined;
   }
 
   getPlantIcon(plant: Plant) {

@@ -3,7 +3,7 @@ package irrigationsystem.model;
 public enum MeasureTypeEnum {
     Temperature(1),
     Humidity(2),
-    Pressure(3);
+    SoilMoisture(3);
 
     private final int value;
 

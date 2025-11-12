@@ -1,5 +1,6 @@
+
 .auth-container {
-  background: #ffffffdd;
+  background: var(--mint-form-bg);
   border-radius: 1rem;
   box-shadow: 0 15px 40px rgb(6 78 59 / 0.25);
   max-width: 900px;
@@ -13,8 +14,9 @@
 /* Left side - info panel */
 .auth-info {
   flex: 1.2;
-  background: linear-gradient(135deg, #00796b, #004d40);
-  color: #a7ffeb;
+  background: var(--mint-form-bg) url('/assets/irrigation-system.jpeg') no-repeat center center;
+  background-size: cover; /* or contain depending on your design */
+  color: var( --dark-text);
   padding: 3rem 2.5rem;
   display: flex;
   flex-direction: column;
@@ -42,23 +44,13 @@
 /* Right side - forms */
 .auth-forms {
   flex: 1;
-  background: #e0f2f1;
+  background: var(--light-form-bg);
   padding: 3rem 3rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   border-radius: 0 1rem 1rem 0;
 }
-
-.auth-forms h3 {
-  color: #004d40;
-  font-weight: 700;
-  font-size: 1.8rem;
-  margin-bottom: 1.8rem;
-  text-align: center;
-  letter-spacing: 0.05em;
-}
-
 
 /* Responsive */
 @media (max-width: 768px) {
