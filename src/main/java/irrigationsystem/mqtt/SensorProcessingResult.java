@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public record SensorProcessingResult(
-        Map<Plant, List<Map<MeasureTypeEnum, Double>>> plantMeasures,
+        Map<Plant, Map<MeasureTypeEnum, Double>> plantMeasures,
         List<SensorData> sensorData
 ) {}

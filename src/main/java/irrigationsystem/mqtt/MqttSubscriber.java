@@ -73,6 +73,7 @@ public class MqttSubscriber {
                     Long deviceId = json.get("deviceId").asLong();
                     double temperature = json.get("temperature").asDouble();
                     double humidity = json.get("humidity").asDouble();
+                    double soilMoisture = json.get("soilMoisture").asDouble();
 
                     // get sensors for device
                     List<Sensor> sensors = sensorRepository.findByDeviceId(deviceId);
@@ -82,7 +83,7 @@ public class MqttSubscriber {
                     }
 
                     // Organize sensor data by Plant
-                    SensorProcessingResult result = processSensorMeasurements(sensors, temperature, humidity);
+                    SensorProcessingResult result = processSensorMeasurements(sensors, temperature, humidity, soilMoisture);
 
                     // Analyze data and generate reports
                     List<ReportDto> reports = analyze(result.plantMeasures());
@@ -118,7 +119,7 @@ public class MqttSubscriber {
         }
     }
 
-    private List<ReportDto> analyze(Map<Plant, List<Map<MeasureTypeEnum, Double>>> plantMeasures) {
+    private List<ReportDto> analyze(Map<Plant, Map<MeasureTypeEnum, Double>> plantMeasures) {
         List<ReportDto> reports = new ArrayList<>();
 
         for (var entry : plantMeasures.entrySet()) {
@@ -126,26 +127,23 @@ public class MqttSubscriber {
             Plant plant = entry.getKey();
             GrowthPhase growthPhase = cacheService.getGrowthPhase(plant.getPlantingDate(), plant.getPlantType().getId());
 
-            List<Map<MeasureTypeEnum, Double>> measureValuesList = entry.getValue();
+            Analyzer analyzer = AnalyzerFactory.createAnalyzer(plant.getId(), plant.getPlantType(), growthPhase, entry.getValue());
 
-            for (var mv : measureValuesList) {
-                Analyzer analyzer = AnalyzerFactory.createAnalyzer(plant.getId(), plant.getPlantType(), growthPhase, mv);
+            ReportDto report = analyzer.analyze();
 
-                ReportDto report = analyzer.analyze();
-
-                if (report != null) {
-                    reports.add(report);
-                }
+            if (report != null) {
+                reports.add(report);
             }
+
         }
 
         return reports;
     }
 
-    private SensorProcessingResult processSensorMeasurements(List<Sensor> sensors, double temperature, double humidity) {
+    private SensorProcessingResult processSensorMeasurements(List<Sensor> sensors, double temperature, double humidity, double soilMoisture) {
 
         List<SensorData> data = new ArrayList<>();
-        Map<Plant, List<Map<MeasureTypeEnum, Double>>> PlantMeasures = new HashMap<>();
+        Map<Plant, Map<MeasureTypeEnum, Double>> plantMeasures = new HashMap<>();
 
         for (var sensor : sensors) {
             Map<MeasureTypeEnum, Double> sensorValues = new EnumMap<>(MeasureTypeEnum.class);
@@ -158,6 +156,7 @@ public class MqttSubscriber {
                     Double value = switch (measureType) {
                         case Temperature -> temperature;
                         case Humidity -> humidity;
+                        case SoilMoisture -> soilMoisture;
                         default -> null;
                     };
 
@@ -171,12 +170,15 @@ public class MqttSubscriber {
                 }
             }
 
+
             if (!sensorValues.isEmpty()) {
-                PlantMeasures.computeIfAbsent(sensor.getPlant(), k -> new ArrayList<>()).add(sensorValues);
+                plantMeasures
+                        .computeIfAbsent(sensor.getPlant(), k -> new EnumMap<>(MeasureTypeEnum.class))
+                        .putAll(sensorValues);
             }
         }
 
-        return new SensorProcessingResult(PlantMeasures, data);
+        return new SensorProcessingResult(plantMeasures, data);
     }
 
     private SensorData createSensorData(Sensor sensor, double value, MeasureType measureType) {

@@ -2,6 +2,10 @@ select {
   margin-bottom: 0;
 }
 
+button {
+  max-width: 200px;
+}
+
 /* Form styling */
 .form-card {
   background: #ffffffcc;
@@ -41,6 +45,16 @@ select {
 }
 
 .needs-irrigation {color: red;}
+
+.irrigate-button {
+  background-color: #93e4aa;
+  max-width: 70px;
+  height: 30px;
+  font-size: 14px;
+  padding: 0;
+  margin: 0 0 0 10px;
+  display: inline-block;
+}
 
 /* Plant icon circle */
 .plant-icon {

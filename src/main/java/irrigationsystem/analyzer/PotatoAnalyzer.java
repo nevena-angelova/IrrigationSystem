@@ -4,7 +4,6 @@ import irrigationsystem.dto.ReportDto;
 import irrigationsystem.model.GrowthPhase;
 import irrigationsystem.model.MeasureTypeEnum;
 
-import java.time.LocalDate;
 import java.util.Map;
 
 public class PotatoAnalyzer extends Analyzer {
@@ -15,18 +14,18 @@ public class PotatoAnalyzer extends Analyzer {
     @Override
     public ReportDto analyze() {
         double temperature = getTemperature();
-        double humidity = getHumidity();
-        double pressure = getPressure().orElse(0.0);
+        double maxSoilMoisture = getSoilMoisture();
+        double soilMoisture = getSoilMoisture();
 
-        if (humidity < getMinHumidity()) {
+        if (maxSoilMoisture < getMinSoilMoisture()) {
             setReportNeedsIrrigation(true);
         }
 
-        if (humidity > getMaxHumidity()) {
+        if (maxSoilMoisture > getMaxSoilMoisture()) {
             addReportWarning("Почвата е прекалено мокра – риск от гниене на клубените.");
         }
 
-        if (humidity < 35) {
+        if (maxSoilMoisture < 35) {
             addReportWarning("Критично ниска влажност – възможно завяхване.");
         }
 
@@ -36,13 +35,24 @@ public class PotatoAnalyzer extends Analyzer {
             addReportWarning("Прекалено висока температура – възможен топлинен и воден стрес.");
         }
 
-        if (temperature >= 15 && temperature <= 25 &&
-                humidity > 80 && pressure < 1000) {
-            addReportWarning("Висок риск от мана (Phytophthora) – проверете листата и стъблата.");
+        if (temperature >= 15 && temperature <= 25 && soilMoisture > 85 && maxSoilMoisture > 75) {
+            addReportWarning("Висока влажност и умерена температура – риск от мана по картофите (Phytophthora infestans).");
         }
 
-        if (pressure < 995) {
-            addReportWarning("Ниско атмосферно налягане – възможно застудяване или дъжд, висока влажност.");
+        if (temperature > 25 && soilMoisture > 80) {
+            addReportWarning("Топло и влажно време – възможна поява на алтернария (кафяви петна по листата).");
+        }
+
+        if (temperature >= 10 && temperature <= 20 && maxSoilMoisture > 85) {
+            addReportWarning("Почвата е прекалено влажна и хладна – възможно развитие на сиво гниене (Botrytis).");
+        }
+
+        if (soilMoisture < 40 && temperature > 28 && maxSoilMoisture < 50) {
+            addReportWarning("Горещо и сухо време – риск от воден стрес и деформирани клубени.");
+        }
+
+        if (soilMoisture > 90 && temperature < 15) {
+            addReportWarning("Продължителна висока влажност и ниска температура – възможно развитие на бактериални гниения.");
         }
 
         return getReport();

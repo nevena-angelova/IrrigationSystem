@@ -111,18 +111,18 @@ public class SeedDataConfig implements CommandLineRunner {
         temperature.setName("Temperature");
         temperature.setUnit("°C");
 
-        MeasureType humidity = new MeasureType();
-        humidity.setName("Humidity");
-        humidity.setUnit("%");
+        MeasureType soilMoisture = new MeasureType();
+        soilMoisture.setName("Humidity");
+        soilMoisture.setUnit("%");
 
         MeasureType pressure = new MeasureType();
-        pressure.setName("Pressure");
-        pressure.setUnit("hPa");
+        pressure.setName("SoilMoisture");
+        pressure.setUnit("%");
 
         SensorType dht22 = new SensorType();
         dht22.setName("DHT22");
         dht22.addMeasureType(temperature);
-        dht22.addMeasureType(humidity);
+        dht22.addMeasureType(soilMoisture);
 
         SensorType tmp36 = new SensorType();
         tmp36.setName("TMP36");

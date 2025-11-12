@@ -1,39 +1,41 @@
 <section class="form-card " aria-label="Create new Plant form">
-  <form id="create-Plant-form" (ngSubmit)="createPlant()" novalidate>
-    <h3>Добавяне на нова култура</h3>
-    <div class="d-flex align-items-center mb-4">
-      <label for="planting-date" class="me-2 mb-0">Дата на засаждане:</label>
-      <input type="date" id="planting-date" class="form-control"
-             [(ngModel)]="selectedDate" name="planting-date" required>
-    </div>
-    <div class="d-flex align-items-end gap-2 mb-4">
-      <label for="plant-type" class="me-2 mb-0">Тип култура:</label>
-      <select id="plant-type" [(ngModel)]="selectedPlantType" name="plant-type" required aria-required="true">
-        <option *ngFor="let type of plantTypes" [value]="type.id">{{ type.name }}</option>
-      </select>
-      <button type="submit">Добави</button>
-    </div>
-  </form>
+    <form id="create-plant-form" (ngSubmit)="createPlant()" novalidate>
+        <h3>Добавяне на нова култура</h3>
+        <div class="d-flex align-items-center mb-4">
+            <label for="planting-date" class="me-2 mb-0">Дата на засаждане:</label>
+            <input type="date" id="planting-date" class="form-control"
+                   [(ngModel)]="selectedDate" name="planting-date" required>
+        </div>
+        <div class="d-flex align-items-end gap-2 mb-4">
+            <label for="plant-type" class="me-2 mb-0">Тип култура:</label>
+            <select id="plant-type" [(ngModel)]="selectedPlantType" name="plant-type" required aria-required="true">
+                <option *ngFor="let type of plantTypes" [value]="type.id">{{ type.name }}</option>
+            </select>
+            <button type="submit">Добави</button>
+        </div>
+    </form>
 </section>
 <section class="cards-container" aria-label="Plant irrigation status">
-  <article *ngFor="let plant of plants" class="card">
-    <div class="plant-icon" aria-hidden="true">{{ plant.icon }}</div>
-    <h3 class="plant-name">{{ plant.plantType.name }}</h3>
-    <p *ngIf="hasReport(plant)" class="growth-stage">{{ plant.report.growthPhaseName }}</p>
-      <p *ngIf="hasReport(plant)" class="growth-stage-details">{{ plant.report.growthPhaseDetails }}</p>
-    <p class="planting-date">Засаждане: {{ plant.plantingDate | date: 'dd.MM.yyyy' }}</p>
-    <p *ngIf="hasReport(plant)" class="humidity">Влажност: {{ plant.report.humidity | number:'1.1-1' }}</p>
-    <p *ngIf="needsIrrigation(plant)" class="needs-irrigation">Нужно е поливане</p>
-    <div *ngIf="hasWarnings(plant)" class="warning">
-      <p *ngFor="let warning of plant.report.warnings">
-        <span class="warning-icon" aria-hidden="true">⚠️</span>
-        <span>{{ warning }}</span>
-      </p>
-    </div>
-      <div>
-    <button (click)="irrigate(plant.deviceId, plant.relayId, plant.report.irrigationDuration)" class="irrigate-button">Полей</button>
-      </div>
-    <app-ring *ngIf="hasReport(plant)" [min]="getMinHumidity(plant)" [max]="getMaxHumidity(plant)"
-              [current]="getHumidity(plant)"></app-ring>
-  </article>
+    <article *ngFor="let plant of plants" class="card">
+        <div class="plant-icon" aria-hidden="true">{{ plant.icon }}</div>
+        <h3 class="plant-name">{{ plant.plantType.name }}</h3>
+        <p *ngIf="hasReport(plant)" class="growth-stage">{{ plant.report.growthPhaseName }}</p>
+        <p *ngIf="hasReport(plant)" class="growth-stage-details">{{ plant.report.growthPhaseDetails }}</p>
+        <p class="planting-date">Засаждане: {{ plant.plantingDate | date: 'dd.MM.yyyy' }}</p>
+        <p *ngIf="hasReport(plant)" class="soil-moisture">Влажност на
+            почвата: {{ getSoilMoisture(plant) | number:'1.1-1' }}</p>
+        <div *ngIf="needsIrrigation(plant)" class="needs-irrigation">
+            Нужно е поливане
+            <button (click)="irrigate(plant.deviceId, plant.relayId, plant.report.irrigationDuration)" class="irrigate-button">Полей
+            </button>
+        </div>
+        <div *ngIf="hasWarnings(plant)" class="warning">
+            <p *ngFor="let warning of plant.report.warnings">
+                <span class="warning-icon" aria-hidden="true">⚠️</span>
+                <span>{{ warning }}</span>
+            </p>
+        </div>
+        <app-ring *ngIf="hasReport(plant)" [min]="getMinSoilMoisture(plant)" [max]="getMaxSoilMoisture(plant)"
+                  [current]="getSoilMoisture(plant)"></app-ring>
+    </article>
 </section>
