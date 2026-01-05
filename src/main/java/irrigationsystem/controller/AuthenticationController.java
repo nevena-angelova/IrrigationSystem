@@ -1,6 +1,8 @@
 package irrigationsystem.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import irrigationsystem.dto.JwtResponse;
+import irrigationsystem.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,7 @@ public class AuthenticationController {
     @Operation(summary = "Register a new user", description = "Registers a new user by saving their information in the database.")
     public ResponseEntity register(@RequestBody UserDto userDto) {
         try{
-            var result = authenticationService.register(userDto);
+            ResponseDto<JwtResponse> result = authenticationService.register(userDto);
             if (result.hasErrors()) {
                 return ResponseEntity.badRequest().body(result.getErrorMessage());
             }
@@ -36,7 +38,7 @@ public class AuthenticationController {
     @Operation(summary = "Login a user", description = "Login as user, existing in the database.")
     public ResponseEntity login(@RequestBody UserDto userDto) {
         try{
-            var result = authenticationService.login(userDto);
+            ResponseDto<JwtResponse> result = authenticationService.login(userDto);
             if (result.hasErrors()) {
                 return ResponseEntity.badRequest().body(result.getErrorMessage());
             }

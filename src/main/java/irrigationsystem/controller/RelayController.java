@@ -1,5 +1,6 @@
 package irrigationsystem.controller;
 
+import irrigationsystem.dto.ResponseDto;
 import irrigationsystem.service.RelayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class RelayController {
     @PostMapping("/{deviceId}/on")
     public ResponseEntity turnOn(@PathVariable long deviceId) {
         try {
-            var result = relayService.turnRelayOn(deviceId);
+            ResponseDto<String> result = relayService.turnRelayOn(deviceId);
 
             return ResponseEntity.ok(result.getValue());
 
@@ -30,7 +31,7 @@ public class RelayController {
     @PostMapping("/{deviceId}/off")
     public ResponseEntity turnOff(@PathVariable long deviceId) {
         try {
-            var result = relayService.turnRelayOff(deviceId);
+            ResponseDto<String> result = relayService.turnRelayOff(deviceId);
 
             return ResponseEntity.ok(result.getValue());
 
