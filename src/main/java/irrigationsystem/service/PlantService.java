@@ -59,11 +59,11 @@ public class PlantService {
 
         firstUnusedRelay.ifPresent(relay -> {
             relay.setUsed(true);
-            relayRepository.save(relay); // mark relay as used
-            plant.setRelay(relay);       // assign relay BEFORE saving plant
+            relayRepository.save(relay);
+            plant.setRelay(relay);       // assign relay before saving a plant
         });
 
-        // Save the plant AFTER relay is set
+        // Save the plant after relay is set
         plantRepository.save(plant);
 
         // Attach sensors
@@ -73,7 +73,7 @@ public class PlantService {
         plant.getSensors().clear();
         plant.getSensors().addAll(sensors);
 
-        // Save again only if you want the plant to have updated sensor references
+        // Save again only if the plant needs to have updated sensor references
         plantRepository.save(plant);
 
         return ResponseDto.<String>builder().value("Plant created successfully").build();
@@ -116,7 +116,7 @@ public class PlantService {
                 measureValues.put(measureType, measure.getValue());
             }
 
-            // each group values has same plant data so take first item
+            // each group value has same plant data so take first item
             MeasureValuesDto mv = group.getValue().getFirst();
 
             GrowthPhase growthPhase = cacheService.getGrowthPhase(mv.getPlantingDate(), mv.getPlantTypeId());

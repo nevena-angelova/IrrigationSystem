@@ -31,7 +31,17 @@ public abstract class Analyzer {
         return report;
     }
 
-    protected double getSoilMoisture() { return this.measureValues.get(MeasureTypeEnum.SoilMoisture); }
+    protected double getSoilMoisture() {
+        return this.measureValues.get(MeasureTypeEnum.SoilMoisture);
+    }
+
+    protected double getTemperature() {
+        return this.measureValues.get(MeasureTypeEnum.Temperature);
+    }
+
+    protected double getHumidity() {
+        return this.measureValues.get(MeasureTypeEnum.Humidity);
+    }
 
     protected double getMinSoilMoisture() {
         return growthPhase.getMinSoilMoisture();
@@ -39,10 +49,6 @@ public abstract class Analyzer {
 
     protected double getMaxSoilMoisture() {
         return growthPhase.getMaxSoilMoisture();
-    }
-
-    protected double getTemperature() {
-        return this.measureValues.get(MeasureTypeEnum.Temperature);
     }
 
     public abstract ReportDto analyze();

@@ -15,18 +15,18 @@ public class StrawberryAnalyzer  extends Analyzer {
     public ReportDto analyze() {
 
         double temperature = getTemperature();
-        double maxSoilMoisture = getSoilMoisture();
         double soilMoisture = getSoilMoisture();
+        double humidity = getHumidity();
 
-        if (maxSoilMoisture < getMinSoilMoisture()) {
+        if (soilMoisture < getMinSoilMoisture()) {
             setReportNeedsIrrigation(true);
         }
 
-        if (maxSoilMoisture > getMaxSoilMoisture()) {
+        if (soilMoisture > getMaxSoilMoisture()) {
             addReportWarning("Почвата е прекалено мокра – риск от гниене на корените.");
         }
 
-        if (maxSoilMoisture < 40) {
+        if (soilMoisture < 40) {
             addReportWarning("Критично ниска влажност – възможно завяхване.");
         }
 
@@ -36,27 +36,27 @@ public class StrawberryAnalyzer  extends Analyzer {
             addReportWarning("Прекалено висока температура – възможен топлинен и воден стрес.");
         }
 
-        if (soilMoisture > 85 && temperature >= 15 && temperature <= 25) {
+        if (humidity > 85 && temperature >= 15 && temperature <= 25) {
             addReportWarning("Висока влажност и умерена температура – риск от сиво гниене (Botrytis cinerea).");
         }
 
-        if (soilMoisture > 80 && temperature > 25) {
+        if (humidity > 80 && temperature > 25) {
             addReportWarning("Топло и влажно време – възможна поява на брашнеста мана по листата.");
         }
 
-        if (soilMoisture < 40 && temperature > 28) {
+        if (humidity < 40 && temperature > 28) {
             addReportWarning("Сух и горещ въздух – риск от загуба на влага, пригори и по-слабо плододаване.");
         }
 
-        if (temperature < 12 && soilMoisture > 90 && maxSoilMoisture > 80) {
+        if (temperature < 12 && humidity > 90 && soilMoisture > 80) {
             addReportWarning("Хладно и влажно време – възможно развитие на кореново гниене (Phytophthora fragariae).");
         }
 
-        if (maxSoilMoisture > 80 && soilMoisture > 90) {
+        if (soilMoisture > 80 && humidity > 90) {
             addReportWarning("Продължителна влажност – възможна поява на сиво гниене и плесен върху плодовете.");
         }
 
-        if (maxSoilMoisture < 50 && soilMoisture < 40 && temperature > 30) {
+        if (soilMoisture < 50 && humidity < 40 && temperature > 30) {
             addReportWarning("Горещо и сухо време – растенията изпитват стрес, възможно спиране на плододаването.");
         }
 

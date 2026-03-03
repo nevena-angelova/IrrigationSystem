@@ -6,7 +6,6 @@ import irrigationsystem.dto.PlantDto;
 import irrigationsystem.dto.PlantTypeDto;
 import irrigationsystem.dto.ResponseDto;
 import irrigationsystem.service.PlantService;
-import irrigationsystem.service.RelayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,9 +65,6 @@ public class PlantController {
             return ResponseEntity.badRequest().body("Error");
         }
     }
-
-
-    private final RelayService relayService;
 
     @PostMapping("/irrigate/{deviceId}/{relayId}/{irrigationDuration}")
     public ResponseEntity irrigate(@PathVariable Integer deviceId, @PathVariable Integer relayId, @PathVariable Integer irrigationDuration) {

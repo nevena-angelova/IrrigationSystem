@@ -16,18 +16,18 @@ public class TomatoAnalyzer extends Analyzer {
     public ReportDto analyze() {
 
         double temperature = getTemperature();
-        double maxSoilMoisture = getSoilMoisture();
         double soilMoisture = getSoilMoisture();
+        double humidity = getHumidity();
 
-        if (maxSoilMoisture < getMinSoilMoisture()) {
+        if (soilMoisture < getMinSoilMoisture()) {
             setReportNeedsIrrigation(true);
         }
 
-        if (maxSoilMoisture > getMaxSoilMoisture()) {
+        if (soilMoisture > getMaxSoilMoisture()) {
             addReportWarning("Почвата е прекалено мокра – риск от гниене на корените.");
         }
 
-        if (maxSoilMoisture < 40) {
+        if (soilMoisture < 40) {
             addReportWarning("Критично ниска влажност – възможно завяхване.");
         }
 
@@ -37,31 +37,31 @@ public class TomatoAnalyzer extends Analyzer {
             addReportWarning("Температурата е твърде висока – риск от стрес.");
         }
 
-        if (soilMoisture > 85 && temperature >= 18 && temperature <= 25) {
+        if (humidity > 85 && temperature >= 18 && temperature <= 25) {
             addReportWarning("Висока влажност и умерена температура – идеални условия за развитие на мана (Phytophthora infestans).");
         }
 
-        if (soilMoisture > 80 && temperature > 26) {
+        if (humidity > 80 && temperature > 26) {
             addReportWarning("Топло и влажно време – риск от брашнеста мана и гъбични инфекции по листата.");
         }
 
-        if (soilMoisture < 40 && temperature > 30) {
+        if (humidity < 40 && temperature > 30) {
             addReportWarning("Сух и горещ въздух – възможен стрес и върхово гниене (дефицит на калций).");
         }
 
-        if (maxSoilMoisture > 80 && soilMoisture > 85) {
+        if (soilMoisture > 80 && humidity > 85) {
             addReportWarning("Продължителна влажност на почвата и въздуха – риск от мана и бактериално петносване.");
         }
 
-        if (maxSoilMoisture < 50 && soilMoisture < 40 && temperature > 30) {
+        if (soilMoisture < 50 && humidity < 40 && temperature > 30) {
             addReportWarning("Горещо и сухо време – риск от пригори и деформации на плодовете.");
         }
 
-        if (temperature > 35 && soilMoisture < 35) {
+        if (temperature > 35 && humidity < 35) {
             addReportWarning("Изключително горещо и сухо – възможен топлинен шок, спиране на растежа и лошо опрашване.");
         }
 
-        if (temperature < 12 && soilMoisture > 80 && maxSoilMoisture > 75) {
+        if (temperature < 12 && humidity > 80 && soilMoisture > 75) {
             addReportWarning("Хладно и влажно време – риск от бактериални болести по стъблата и листата.");
         }
 
