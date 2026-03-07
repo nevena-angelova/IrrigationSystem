@@ -18,7 +18,7 @@ public class Plant {
     private LocalDate plantingDate;
 
     @Column(name = "plant_type_id")
-    private Long plantTypeId;
+    private int plantTypeId;
 
     @ManyToOne
     @JoinColumn(name = "plant_type_id", nullable = false, insertable = false, updatable = false)
@@ -59,8 +59,8 @@ public class Plant {
         return sensors;
     }
 
-    public void setPlantTypeId(Long PlantTypeId) {
-        this.plantTypeId = PlantTypeId;
+    public void setPlantTypeId(int plantTypeId) {
+        this.plantTypeId = plantTypeId;
     }
 
     public void setRelay(Relay relay) {

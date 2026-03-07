@@ -3,11 +3,11 @@ package irrigationsystem.dto;
 import java.time.LocalDate;
 
 public class CreatePlantDto {
-    private Long plantTypeId;
+    private int plantTypeId;
 
     private LocalDate plantingDate;
 
-    public Long getPlantTypeId() {
+    public int getPlantTypeId() {
         return plantTypeId;
     }
 
