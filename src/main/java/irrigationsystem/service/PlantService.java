@@ -158,7 +158,7 @@ public class PlantService {
     // Sensor has type and each type can measure one or two parameters
     private List<Sensor> getSensors(Plant Plant, Device device) {
 
-        var sensorTypes = sensorTypeRepository.findByNameIn(List.of("DHT22", "BMP180"));
+        var sensorTypes = sensorTypeRepository.findByNameIn(List.of("DHT22", "BH1750", "BMP180"));
         List<Sensor> sensors = new ArrayList<>();
 
         for (var sensorType : sensorTypes) {

@@ -18,6 +18,7 @@ public class TomatoAnalyzer extends Analyzer {
         double temperature = getTemperature();
         double soilMoisture = getSoilMoisture();
         double humidity = getHumidity();
+        double light = getLight();
 
         if (soilMoisture < getMinSoilMoisture()) {
             setReportNeedsIrrigation(true);
@@ -63,6 +64,12 @@ public class TomatoAnalyzer extends Analyzer {
 
         if (temperature < 12 && humidity > 80 && soilMoisture > 75) {
             addReportWarning("Хладно и влажно време – риск от бактериални болести по стъблата и листата.");
+        }
+
+        if (light < 20000) {
+            addReportWarning("Недостатъчно осветление – растенията може да забавят растежа и плододаването.");
+        } else if (light > 100000) {
+            addReportWarning("Прекалено силно осветление – възможен стрес за растенията, риск от изгаряне на листата.");
         }
 
         return getReport();

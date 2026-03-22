@@ -16,6 +16,7 @@ public class PotatoAnalyzer extends Analyzer {
         double temperature = getTemperature();
         double soilMoisture = getSoilMoisture();
         double humidity = getHumidity();
+        double light = getLight();
 
         if (soilMoisture < getMinSoilMoisture()) {
             setReportNeedsIrrigation(true);
@@ -53,6 +54,12 @@ public class PotatoAnalyzer extends Analyzer {
 
         if (humidity > 90 && temperature < 15) {
             addReportWarning("Продължителна висока влажност и ниска температура – възможно развитие на бактериални гниения.");
+        }
+
+        if (light < 15000) {
+            addReportWarning("Недостатъчно осветление – растенията може да забавят растежа и плододаването.");
+        } else if (light > 90000) {
+            addReportWarning("Прекалено силно осветление – възможен стрес за растенията, риск от изгаряне на листата.");
         }
 
         return getReport();

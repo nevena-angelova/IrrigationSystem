@@ -21,10 +21,7 @@ public abstract class Analyzer {
     public Analyzer(Long plantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues) {
         this.measureValues = measureValues;
         this.growthPhase = growthPhase;
-        this.report = new ReportDto(plantId,
-                measureValues.get(MeasureTypeEnum.SoilMoisture),
-                growthPhase
-        );
+        this.report = new ReportDto(plantId, growthPhase);
     }
 
     protected ReportDto getReport() {
@@ -41,6 +38,10 @@ public abstract class Analyzer {
 
     protected double getHumidity() {
         return this.measureValues.get(MeasureTypeEnum.Humidity);
+    }
+
+    protected  double getLight(){
+        return this.measureValues.get(MeasureTypeEnum.Light);
     }
 
     protected double getMinSoilMoisture() {

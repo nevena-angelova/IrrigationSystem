@@ -17,6 +17,7 @@ public class CarrotAnalyzer extends Analyzer {
         double temperature = getTemperature();
         double humidity = getHumidity();
         double soilMoisture = getSoilMoisture();
+        double light = getLight();
 
         if (soilMoisture < getMinSoilMoisture()) {
             setReportNeedsIrrigation(true);
@@ -56,6 +57,12 @@ public class CarrotAnalyzer extends Analyzer {
 
         if (temperature > 20 && soilMoisture > 85) {
             addReportWarning("Топла и влажна почва – риск от кореново гниене.");
+        }
+
+        if (light < 15000) {
+            addReportWarning("Недостатъчно осветление – растенията може да забавят растежа и плододаването.");
+        } else if (light > 90000) {
+            addReportWarning("Прекалено силно осветление – възможен стрес за растенията, риск от изгаряне на листата.");
         }
 
         return getReport();

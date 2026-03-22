@@ -79,9 +79,9 @@ public class SeedDataConfig implements CommandLineRunner {
 
         userRepository.save(admin);
 
-        // Add sensors to device
+        // Add sensors to a device
 
-        List<SensorType> sensorTypes = sensorTypeRepository.findByNameIn(List.of("DHT22", "BMP180"));
+        List<SensorType> sensorTypes = sensorTypeRepository.findByNameIn(List.of("DHT22", "BH1750", "BMP180"));
         List<Sensor> sensors = new ArrayList<>();
 
         for (var sensorType : sensorTypes) {
@@ -111,28 +111,32 @@ public class SeedDataConfig implements CommandLineRunner {
         temperature.setName("Temperature");
         temperature.setUnit("°C");
 
-        MeasureType soilMoisture = new MeasureType();
-        soilMoisture.setName("Humidity");
-        soilMoisture.setUnit("%");
+        MeasureType humidity = new MeasureType();
+        humidity.setName("Humidity");
+        humidity.setUnit("%");
 
-        MeasureType pressure = new MeasureType();
-        pressure.setName("SoilMoisture");
-        pressure.setUnit("%");
+        MeasureType light = new MeasureType();
+        light.setName("Light");
+        light.setUnit("lx");
+
+        MeasureType soilMoisture = new MeasureType();
+        soilMoisture.setName("SoilMoisture");
+        soilMoisture.setUnit("%");
 
         SensorType dht22 = new SensorType();
         dht22.setName("DHT22");
         dht22.addMeasureType(temperature);
-        dht22.addMeasureType(soilMoisture);
+        dht22.addMeasureType(humidity);
 
-        SensorType tmp36 = new SensorType();
-        tmp36.setName("TMP36");
-        tmp36.addMeasureType(temperature);
+        SensorType bh1750 = new SensorType();
+        bh1750.setName("BH1750");
+        bh1750.addMeasureType(light);
 
         SensorType bmp180 = new SensorType();
         bmp180.setName("BMP180");
-        bmp180.addMeasureType(pressure);
+        bmp180.addMeasureType(soilMoisture);
 
-        sensorTypeRepository.saveAll(List.of(dht22, tmp36, bmp180));
+        sensorTypeRepository.saveAll(List.of(dht22, bh1750, bmp180));
     }
 
     private void seedPlantsAndGrowthPhases() {

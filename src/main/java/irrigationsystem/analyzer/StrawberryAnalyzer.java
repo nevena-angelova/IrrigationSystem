@@ -17,6 +17,7 @@ public class StrawberryAnalyzer  extends Analyzer {
         double temperature = getTemperature();
         double soilMoisture = getSoilMoisture();
         double humidity = getHumidity();
+        double light = getLight();
 
         if (soilMoisture < getMinSoilMoisture()) {
             setReportNeedsIrrigation(true);
@@ -58,6 +59,12 @@ public class StrawberryAnalyzer  extends Analyzer {
 
         if (soilMoisture < 50 && humidity < 40 && temperature > 30) {
             addReportWarning("Горещо и сухо време – растенията изпитват стрес, възможно спиране на плододаването.");
+        }
+
+        if (light < 20000) {
+            addReportWarning("Недостатъчно осветление – растенията може да забавят растежа и плододаването.");
+        } else if (light > 80000) {
+            addReportWarning("Прекалено силно осветление – възможен стрес за растенията, риск от изгаряне на листата.");
         }
 
         return getReport();

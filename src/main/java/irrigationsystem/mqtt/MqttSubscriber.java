@@ -73,9 +73,10 @@ public class MqttSubscriber {
                     Long deviceId = json.get("deviceId").asLong();
                     double temperature = json.get("temperature").asDouble();
                     double humidity = json.get("humidity").asDouble();
+                    double light = json.get("light").asDouble();
                     double soilMoisture = json.get("soilMoisture").asDouble();
 
-                    // get sensors for device
+                    // get sensors for a device
                     List<Sensor> sensors = sensorRepository.findByDeviceId(deviceId);
                     if (sensors == null || sensors.isEmpty()) {
                         log.warn("No sensors found for device {}", deviceId);
@@ -83,7 +84,7 @@ public class MqttSubscriber {
                     }
 
                     // Organize sensor data by Plant
-                    SensorProcessingResult result = processSensorMeasurements(sensors, temperature, humidity, soilMoisture);
+                    SensorProcessingResult result = processSensorMeasurements(sensors, temperature, humidity, light, soilMoisture);
 
                     // Analyze data and generate reports
                     List<ReportDto> reports = analyze(result.plantMeasures());
@@ -140,7 +141,7 @@ public class MqttSubscriber {
         return reports;
     }
 
-    private SensorProcessingResult processSensorMeasurements(List<Sensor> sensors, double temperature, double humidity, double soilMoisture) {
+    private SensorProcessingResult processSensorMeasurements(List<Sensor> sensors, double temperature, double humidity, double light, double soilMoisture) {
 
         List<SensorData> data = new ArrayList<>();
         Map<Plant, Map<MeasureTypeEnum, Double>> plantMeasures = new HashMap<>();
@@ -156,6 +157,7 @@ public class MqttSubscriber {
                     Double value = switch (measureType) {
                         case Temperature -> temperature;
                         case Humidity -> humidity;
+                        case Light -> light;
                         case SoilMoisture -> soilMoisture;
                         default -> null;
                     };

@@ -25,11 +25,10 @@ public class ReportDto {
 
     private List<String> warnings;
 
-    public ReportDto(Long plantId, double soilMoisture, GrowthPhase growthPhase) {
+    public ReportDto(Long plantId, GrowthPhase growthPhase) {
         this.plantId = plantId;
         this.needsIrrigation = false;
         this.warnings = new ArrayList<>();
-        this.soilMoisture = soilMoisture;
         this.minSoilMoisture = growthPhase.getMinSoilMoisture();
         this.maxSoilMoisture = growthPhase.getMaxSoilMoisture();
         this.growthPhaseName = growthPhase.getName();
