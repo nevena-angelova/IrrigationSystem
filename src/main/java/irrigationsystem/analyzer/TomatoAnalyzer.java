@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class TomatoAnalyzer extends Analyzer {
 
-    public TomatoAnalyzer(Long PlantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues) {
-        super(PlantId, growthPhase, measureValues);
+    public TomatoAnalyzer(Long plantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues, boolean hasWater) {
+        super(plantId, growthPhase, measureValues, hasWater);
     }
 
     @Override

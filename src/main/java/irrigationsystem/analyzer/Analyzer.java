@@ -18,10 +18,10 @@ public abstract class Analyzer {
     private final GrowthPhase growthPhase;
     private ReportDto report;
 
-    public Analyzer(Long plantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues) {
+    public Analyzer(Long plantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues, boolean hasWater) {
         this.measureValues = measureValues;
         this.growthPhase = growthPhase;
-        this.report = new ReportDto(plantId, growthPhase);
+        this.report = new ReportDto(plantId, growthPhase, hasWater);
     }
 
     protected ReportDto getReport() {

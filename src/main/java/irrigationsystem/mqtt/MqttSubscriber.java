@@ -75,6 +75,7 @@ public class MqttSubscriber {
                     double humidity = json.get("humidity").asDouble();
                     double light = json.get("light").asDouble();
                     double soilMoisture = json.get("soilMoisture").asDouble();
+                    boolean hasWater =  json.get("hasWater").asBoolean();
 
                     // get sensors for a device
                     List<Sensor> sensors = sensorRepository.findByDeviceId(deviceId);
@@ -87,7 +88,7 @@ public class MqttSubscriber {
                     SensorProcessingResult result = processSensorMeasurements(sensors, temperature, humidity, light, soilMoisture);
 
                     // Analyze data and generate reports
-                    List<ReportDto> reports = analyze(result.plantMeasures());
+                    List<ReportDto> reports = analyze(result.plantMeasures(), hasWater);
 
                     // Send web socket notifications
                     reports.forEach(notificationController::sendReport);
@@ -120,15 +121,15 @@ public class MqttSubscriber {
         }
     }
 
-    private List<ReportDto> analyze(Map<Plant, Map<MeasureTypeEnum, Double>> plantMeasures) {
+    private List<ReportDto> analyze(Map<Plant, Map<MeasureTypeEnum, Double>> plantMeasures, boolean hasWater) {
         List<ReportDto> reports = new ArrayList<>();
 
-        for (var entry : plantMeasures.entrySet()) {
+        for (var measure : plantMeasures.entrySet()) {
 
-            Plant plant = entry.getKey();
+            Plant plant = measure.getKey();
             GrowthPhase growthPhase = cacheService.getGrowthPhase(plant.getPlantingDate(), plant.getPlantType().getId());
 
-            Analyzer analyzer = AnalyzerFactory.createAnalyzer(plant.getId(), plant.getPlantType(), growthPhase, entry.getValue());
+            Analyzer analyzer = AnalyzerFactory.createAnalyzer(plant.getId(), plant.getPlantType(), growthPhase, measure.getValue(),  hasWater);
 
             ReportDto report = analyzer.analyze();
 

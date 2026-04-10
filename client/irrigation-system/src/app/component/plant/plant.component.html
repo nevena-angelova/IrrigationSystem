@@ -35,6 +35,9 @@
                 <span>{{ warning }}</span>
             </p>
         </div>
+        <div *ngIf="!hasWater(plant)" class="no-water">
+            Нивото на водата в резервоара е ниско и напояването е невъзможно!
+        </div>
         <app-ring *ngIf="hasReport(plant)" [min]="getMinSoilMoisture(plant)" [max]="getMaxSoilMoisture(plant)"
                   [current]="getSoilMoisture(plant)"></app-ring>
     </article>

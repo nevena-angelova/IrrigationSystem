@@ -87,6 +87,10 @@ export class PlantComponent implements OnInit {
     return plant.report?.needsIrrigation;
   }
 
+  hasWater(plant: Plant){
+    return plant.report?.hasWater
+  }
+
   hasWarnings(plant: Plant) {
     return plant.report?.warnings.length > 0;
   }

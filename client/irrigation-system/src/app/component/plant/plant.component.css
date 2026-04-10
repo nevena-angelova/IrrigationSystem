@@ -46,6 +46,8 @@ button {
 
 .needs-irrigation {color: red;}
 
+.no-water {color: red;}
+
 .irrigate-button {
   background-color: #93e4aa;
   max-width: 70px;

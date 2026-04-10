@@ -122,7 +122,7 @@ public class PlantService {
             GrowthPhase growthPhase = cacheService.getGrowthPhase(mv.getPlantingDate(), mv.getPlantTypeId());
             PlantType plantType = cacheService.getPlantType(mv.getPlantTypeId());
 
-            Analyzer analyzer = AnalyzerFactory.createAnalyzer(group.getKey(), plantType, growthPhase, measureValues);
+            Analyzer analyzer = AnalyzerFactory.createAnalyzer(group.getKey(), plantType, growthPhase, measureValues, true);
             ReportDto report = analyzer.analyze();
 
             PlantDto plantDto = createPlantDto(mv);
