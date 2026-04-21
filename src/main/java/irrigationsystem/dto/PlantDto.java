@@ -17,7 +17,7 @@ public class PlantDto {
 
     private Integer deviceId;
 
-    private Integer relayId;
+    private Integer relayNumber;
 
     public LocalDate getPlantingDate() {
         return plantingDate;
@@ -57,11 +57,11 @@ public class PlantDto {
         this.deviceId = deviceId;
     }
 
-    public Integer getRelayId(Integer relayId) {
-        return this.relayId;
+    public Integer getRelayNumber(Integer relayNumber) {
+        return this.relayNumber;
     }
 
-    public void setRelayId(Integer relayId) {
-        this.relayId = relayId;
+    public void setRelayNumber(Integer relayNumber) {
+        this.relayNumber = relayNumber;
     }
 }

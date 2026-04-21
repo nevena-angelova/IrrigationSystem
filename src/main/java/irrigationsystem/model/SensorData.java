@@ -14,8 +14,8 @@ public class SensorData {
     @Column(nullable = false)
     private Double value;
 
-    @Column(nullable = false)
-    OffsetDateTime timestamp;
+    @Column(name = "creation_date", nullable = false)
+    OffsetDateTime creationDate;
 
     @ManyToOne
     @JoinColumn(name = "sensor_id")
@@ -37,8 +37,8 @@ public class SensorData {
         this.sensor = sensor;
     }
 
-    public void setTimestamp(OffsetDateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setTimestamp(OffsetDateTime createdAt) {
+        this.creationDate = createdAt;
     }
 
     public void setValue(Double value) {

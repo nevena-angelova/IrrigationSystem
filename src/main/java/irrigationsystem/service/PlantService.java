@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,6 @@ public class PlantService {
     private final SensorRepository sensorRepository;
     private final SensorDataRepository sensorDataRepository;
     private final DeviceRepository deviceRepository;
-    private final RelayRepository relayRepository;
     private final MqttPublisher mqttPublisher;
     private final CacheService cacheService;
 
@@ -50,37 +50,28 @@ public class PlantService {
         Plant plant = new Plant();
         plant.setPlantTypeId(createPlantDto.getPlantTypeId());
         plant.setPlantingDate(createPlantDto.getPlantingDate());
+        plant.setRelayNumber(1);
 
-        // Assign the first unused relay if available
-        List<Relay> relays = device.getRelays();
-        Optional<Relay> firstUnusedRelay = relays.stream()
-                .filter(r -> !r.isUsed())
-                .findFirst();
-
-        firstUnusedRelay.ifPresent(relay -> {
-            relay.setUsed(true);
-            relayRepository.save(relay);
-            plant.setRelay(relay);       // assign relay before saving a plant
-        });
-
-        // Save the plant after relay is set
+        /*
+         Save the plant after relay is set
+         */
         plantRepository.save(plant);
 
-        // Attach sensors
-        var sensors = getSensors(plant, device);
-        sensorRepository.saveAll(sensors);
+        /*
+          Attach sensors
+         */
+        attachSensors(plant, device);
 
-        plant.getSensors().clear();
-        plant.getSensors().addAll(sensors);
-
-        // Save again only if the plant needs to have updated sensor references
+       /*
+        Save again only if the plant needs to have updated sensor references
+        */
         plantRepository.save(plant);
 
         return ResponseDto.<String>builder().value("Plant created successfully").build();
     }
 
     public ResponseDto<List<PlantDto>> getUserPlants() {
-        var userId = getUserId();
+        Optional<Long> userId = getUserId();
 
         if (userId.isEmpty()) {
             return ResponseDto.<List<PlantDto>>builder().errorMessage(Optional.of("Invalid authentication.")).hasErrors(true).build();
@@ -88,50 +79,36 @@ public class PlantService {
 
         List<MeasureValuesDto> measures = sensorDataRepository.getLatestValuesByUserId(userId.get());
 
-        Map<Long, List<MeasureValuesDto>> measuresByPlant = new HashMap<>();
-
         /*
-        groups measure data by Plant id
-        each group will have Plant -> { measure type 1 data, measure type 2 data ...}
-        for types like temperature, soilMoisture and pressure
+          Group measures by Plant ID, then for each group create a PlantDto with the latest measure values and an analysis report.
         */
-        for (var measure : measures) {
-            if (!measuresByPlant.containsKey(measure.getPlantId())) {
-                List<MeasureValuesDto> list = new ArrayList<>();
-                list.add(measure);
-                measuresByPlant.put(measure.getPlantId(), list);
-            } else {
-                measuresByPlant.get(measure.getPlantId()).add(measure);
-            }
-        }
-
-        List<PlantDto> plants = new ArrayList<>();
-
-        // get measure values for each group
-
-        for (var group : measuresByPlant.entrySet()) {
-            Map<MeasureTypeEnum, Double> measureValues = new HashMap<>();
-            for (var measure : group.getValue()) {
-                var measureType = MeasureTypeEnum.valueOf(measure.getMeasureType());
-                measureValues.put(measureType, measure.getValue());
-            }
-
-            // each group value has same plant data so take first item
-            MeasureValuesDto mv = group.getValue().getFirst();
-
-            GrowthPhase growthPhase = cacheService.getGrowthPhase(mv.getPlantingDate(), mv.getPlantTypeId());
-            PlantType plantType = cacheService.getPlantType(mv.getPlantTypeId());
-
-            Analyzer analyzer = AnalyzerFactory.createAnalyzer(group.getKey(), plantType, growthPhase, measureValues, true);
-            ReportDto report = analyzer.analyze();
-
-            PlantDto plantDto = createPlantDto(mv);
-            plantDto.setReport(report);
-
-            plants.add(plantDto);
-        }
+        List<PlantDto> plants =
+                measures.stream()
+                        .collect(Collectors.groupingBy(MeasureValuesDto::getPlantId))
+                        .values()
+                        .stream()
+                        .map(this::buildPlantDto)
+                        .toList();
 
         return ResponseDto.<List<PlantDto>>builder().value(plants).build();
+    }
+
+    public List<PlantDto> getAllPlants() {
+
+        List<MeasureValuesDto> measures = sensorDataRepository.getLatestValuesAllUsers();
+
+       /*
+          Group measures by Plant ID, then for each group create a PlantDto with the latest measure values and an analysis report.
+        */
+        List<PlantDto> plants =
+                measures.stream()
+                        .collect(Collectors.groupingBy(MeasureValuesDto::getPlantId))
+                        .values()
+                        .stream()
+                        .map(this::buildPlantDto)
+                        .toList();
+
+        return plants;
     }
 
     public ResponseDto<String> irrigate(long deviceId, int relayId, int irrigationDuration) {
@@ -141,32 +118,65 @@ public class PlantService {
         return ResponseDto.<String>builder().value("Relay ON command sent to device " + deviceId).build();
     }
 
+    private PlantDto buildPlantDto(List<MeasureValuesDto> group) {
+        MeasureValuesDto mv = group.getFirst();
+
+        Map<MeasureTypeEnum, Double> measureValues =
+                group.stream().collect(Collectors.toMap(
+                        m -> MeasureTypeEnum.valueOf(m.getMeasureType()),
+                        MeasureValuesDto::getValue
+                ));
+
+        GrowthPhase growthPhase = cacheService.getGrowthPhase(
+                mv.getPlantingDate(), mv.getPlantTypeId()
+        );
+
+        PlantType plantType = cacheService.getPlantType(mv.getPlantTypeId());
+
+        Analyzer analyzer = AnalyzerFactory.createAnalyzer(
+                mv.getPlantId(),
+                plantType,
+                growthPhase,
+                measureValues,
+                true
+        );
+
+        ReportDto report = analyzer.analyze();
+
+        PlantDto plantDto = createPlantDto(mv);
+        plantDto.setReport(report);
+
+        return plantDto;
+    }
 
     private PlantDto createPlantDto(MeasureValuesDto measureValuesDto) {
 
-        PlantDto PlantDto = new PlantDto();
-        PlantDto.setId(measureValuesDto.getPlantId());
-        PlantDto.setPlantType(measureValuesDto.getPlantTypeId(), measureValuesDto.getPlantTypeName());
-        PlantDto.setPlantingDate(measureValuesDto.getPlantingDate());
-        PlantDto.setDeviceId(measureValuesDto.getDeviceId());
-        PlantDto.setRelayId(measureValuesDto.getRelayId());
+        PlantDto plantDto = new PlantDto();
+        plantDto.setId(measureValuesDto.getPlantId());
+        plantDto.setPlantType(measureValuesDto.getPlantTypeId(), measureValuesDto.getPlantTypeName());
+        plantDto.setPlantingDate(measureValuesDto.getPlantingDate());
+        plantDto.setDeviceId(measureValuesDto.getDeviceId());
+        plantDto.setRelayNumber(measureValuesDto.getRelayNumber());
 
-        return PlantDto;
+        return plantDto;
     }
 
-    // Every Plant has a temperature, soilMoisture and a pressure sensors attached
-    // Sensor has type and each type can measure one or two parameters
-    private List<Sensor> getSensors(Plant Plant, Device device) {
+    /*
+        Every plant has a temperature, soilMoisture and a pressure sensors attached
+        Sensor has type and each type can measure one or two parameters
+    */
 
-        var sensorTypes = sensorTypeRepository.findByNameIn(List.of("DHT22", "BH1750", "BMP180"));
+    private List<Sensor> attachSensors(Plant plant, Device device) {
+
+        var sensorTypes = sensorTypeRepository.findAll();
         List<Sensor> sensors = new ArrayList<>();
 
-        for (var sensorType : sensorTypes) {
+        for (SensorType type : sensorTypes) {
             Sensor sensor = new Sensor();
-            sensor.setSensorType(sensorType);
-            sensor.setPlant(Plant);
+            sensor.setSensorType(type);
             sensor.setDevice(device);
-            sensors.add(sensor);
+            sensor.setPlant(plant);
+            plant.getSensors().add(sensor);
         }
 
         return sensors;

@@ -11,4 +11,7 @@ import java.util.List;
 public interface SensorDataRepository extends JpaRepository<SensorData, Long> {
     @Query(value = "SELECT * FROM get_latest_measure_values(:userId)", nativeQuery = true)
     List<MeasureValuesDto> getLatestValuesByUserId(@Param("userId") Long userId);
+
+    @Query(value = "SELECT * FROM get_latest_measure_values_all_users()", nativeQuery = true)
+    List<MeasureValuesDto> getLatestValuesAllUsers();
 }

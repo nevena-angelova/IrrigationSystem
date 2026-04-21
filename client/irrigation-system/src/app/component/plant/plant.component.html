@@ -26,7 +26,7 @@
             почвата: {{ getSoilMoisture(plant) | number:'1.1-1' }}</p>
         <div *ngIf="needsIrrigation(plant)" class="needs-irrigation">
             Нужно е поливане
-            <button (click)="irrigate(plant.deviceId, plant.relayId, plant.report.irrigationDuration)" class="irrigate-button">Полей
+            <button (click)="irrigate(plant.deviceId, plant.relayNumber, plant.report.irrigationDuration)" class="irrigate-button">Полей
             </button>
         </div>
         <div *ngIf="hasWarnings(plant)" class="warning">

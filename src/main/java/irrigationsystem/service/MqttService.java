@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class RelayService {
+public class MqttService {
     private final MqttPublisher mqttPublisher;
 
     public ResponseDto<String> turnRelayOn(long deviceId) {

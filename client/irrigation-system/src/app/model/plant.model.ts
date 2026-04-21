@@ -6,7 +6,7 @@ export interface Plant {
     plantingDate: Date;
     plantType: PlantType;
     deviceId: number;
-    relayId: number;
+    relayNumber: number;
     icon: string;
     report: Report;
 }

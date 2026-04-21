@@ -10,7 +10,6 @@ import irrigationsystem.model.User;
 @org.mapstruct.Mapper(componentModel = "spring")
 public interface Mapper {
 
-    UserDto toUserDto(User user);
     User fromUserDto(UserDto userDto);
 
     PlantTypeDto toPlantTypeDto(PlantType PlantType);

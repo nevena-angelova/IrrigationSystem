@@ -84,7 +84,7 @@ public class MqttSubscriber {
                         return;
                     }
 
-                    // Organize sensor data by Plant
+                    // Organize sensor data by plant
                     SensorProcessingResult result = processSensorMeasurements(sensors, temperature, humidity, light, soilMoisture);
 
                     // Analyze data and generate reports

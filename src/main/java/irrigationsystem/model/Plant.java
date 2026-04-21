@@ -14,7 +14,7 @@ public class Plant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="planting_date", nullable = false)
+    @Column(name = "planting_date", nullable = false)
     private LocalDate plantingDate;
 
     @Column(name = "plant_type_id")
@@ -27,9 +27,8 @@ public class Plant {
     @OneToMany(mappedBy = "plant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sensor> sensors = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "relay_id")
-    private Relay relay;
+    @Column(name = "relay_number")
+    private int relayNumber;
 
     public void setId(Long id) {
         this.id = id;
@@ -63,7 +62,11 @@ public class Plant {
         this.plantTypeId = plantTypeId;
     }
 
-    public void setRelay(Relay relay) {
-        this.relay = relay;
+    public int getRelayNumber() {
+        return relayNumber;
+    }
+
+    public void setRelayNumber(int relayNumber) {
+        this.relayNumber = relayNumber;
     }
 }

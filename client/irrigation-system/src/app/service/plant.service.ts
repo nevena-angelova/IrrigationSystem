@@ -25,7 +25,7 @@ export class PlantService {
         return this.httpClient.get<any>(`${this.apiUrl}plants`);
     }
 
-    irrigate(deviceId: number, relayId: number, irrigationDuration: number): Observable<String> {
-        return this.httpClient.post<any>(`${this.apiUrl}irrigate/${deviceId}/${relayId}/${irrigationDuration}`, {}, {responseType: 'text' as 'json'});
+    irrigate(deviceId: number, relayNumber: number, irrigationDuration: number): Observable<String> {
+        return this.httpClient.post<any>(`${this.apiUrl}irrigate/${deviceId}/${relayNumber}/${irrigationDuration}`, {}, {responseType: 'text' as 'json'});
     }
 }

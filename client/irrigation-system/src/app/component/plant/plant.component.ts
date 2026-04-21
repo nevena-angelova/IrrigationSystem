@@ -131,8 +131,8 @@ export class PlantComponent implements OnInit {
     }
   }
 
-    irrigate(deviceId: number, relayId: number, irrigationDuration: number) {
-    this.plantService.irrigate(deviceId, relayId, irrigationDuration).subscribe({
+    irrigate(deviceId: number, relayNumber: number, irrigationDuration: number) {
+    this.plantService.irrigate(deviceId, relayNumber, irrigationDuration).subscribe({
       next: () => this.getPlants(),
       error: (err) => console.error('Error creating Plant:', err)
     });

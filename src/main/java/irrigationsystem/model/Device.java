@@ -18,9 +18,6 @@ public class Device {
     @OneToMany(mappedBy = "device", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Sensor> sensors = new ArrayList<>();
 
-    @OneToMany(mappedBy = "device", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Relay> relays = new ArrayList<>();
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -39,9 +36,5 @@ public class Device {
 
     public List<Sensor> getSensors() {
         return sensors;
-    }
-
-    public List<Relay> getRelays() {
-        return relays;
     }
 }
