@@ -9,19 +9,19 @@ import java.util.Map;
 
 public class AnalyzerFactory {
 
-    public static Analyzer createAnalyzer(Long plantId, PlantType plantType, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> values, boolean hasWater) {
+    public static Analyzer createAnalyzer(Long plantId, PlantType plantType, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> values) {
 
         PlantTypeEnum plantTypeEnum = PlantTypeEnum.getValue(plantType.getId());
 
         switch (plantTypeEnum ) {
             case Tomato:
-                return new TomatoAnalyzer(plantId, growthPhase, values, hasWater);
+                return new TomatoAnalyzer(plantId, growthPhase, values);
             case Strawberry:
-                return new StrawberryAnalyzer(plantId, growthPhase, values, hasWater);
+                return new StrawberryAnalyzer(plantId, growthPhase, values);
             case Potato:
-                return new PotatoAnalyzer(plantId, growthPhase, values, hasWater);
+                return new PotatoAnalyzer(plantId, growthPhase, values);
             case Carrot:
-                return new CarrotAnalyzer(plantId, growthPhase, values,  hasWater);
+                return new CarrotAnalyzer(plantId, growthPhase, values);
             default:
                 throw new IllegalArgumentException("Unknown sensor type: " + plantType);
         }

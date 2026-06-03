@@ -7,8 +7,8 @@ import irrigationsystem.model.MeasureTypeEnum;
 import java.util.Map;
 
 public class StrawberryAnalyzer  extends Analyzer {
-    public StrawberryAnalyzer(Long plantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues, boolean hasWater) {
-        super(plantId, growthPhase, measureValues, hasWater);
+    public StrawberryAnalyzer(Long plantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues) {
+        super(plantId, growthPhase, measureValues);
     }
 
     @Override

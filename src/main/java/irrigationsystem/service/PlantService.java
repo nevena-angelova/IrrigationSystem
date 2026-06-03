@@ -137,8 +137,7 @@ public class PlantService {
                 mv.getPlantId(),
                 plantType,
                 growthPhase,
-                measureValues,
-                true
+                measureValues
         );
 
         ReportDto report = analyzer.analyze();
