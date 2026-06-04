@@ -1,55 +1,32 @@
 package irrigationsystem.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+@Setter
 @Entity
 @Table(name = "sensors")
 public class Sensor {
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Getter
     @ManyToOne
     @JoinColumn(name = "sensor_type_id")
     private SensorType sensorType;
 
     @ManyToOne
-    @JoinColumn(name = "device_id", nullable = true)
+    @JoinColumn(name = "device_id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private Device device;
 
+    @Getter
     @ManyToOne
     @JoinColumn(name = "plant_id")
     private Plant plant;
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-
-    public SensorType getSensorType() {
-        return sensorType;
-    }
-
-    public void setSensorType(SensorType sensorType) {
-        this.sensorType = sensorType;
-    }
-
-    public void setDevice(Device device) {
-        this.device = device;
-    }
-
-    public void setPlant(Plant plant) {
-        this.plant = plant;
-    }
-
-    public Plant getPlant() {
-        return plant;
-    }
 }

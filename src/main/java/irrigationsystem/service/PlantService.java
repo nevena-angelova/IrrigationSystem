@@ -100,15 +100,12 @@ public class PlantService {
        /*
           Group measures by Plant ID, then for each group create a PlantDto with the latest measure values and an analysis report.
         */
-        List<PlantDto> plants =
-                measures.stream()
+      return measures.stream()
                         .collect(Collectors.groupingBy(MeasureValuesDto::getPlantId))
                         .values()
                         .stream()
                         .map(this::buildPlantDto)
                         .toList();
-
-        return plants;
     }
 
     public ResponseDto<String> irrigate(long deviceId, int relayId, int irrigationDuration) {
@@ -161,14 +158,13 @@ public class PlantService {
     }
 
     /*
-        Every plant has a temperature, soilMoisture and a pressure sensors attached
+        Every plant has a temperature, soilMoisture and a pressure sensor attached
         Sensor has type and each type can measure one or two parameters
     */
 
-    private List<Sensor> attachSensors(Plant plant, Device device) {
+    private void attachSensors(Plant plant, Device device) {
 
         var sensorTypes = sensorTypeRepository.findAll();
-        List<Sensor> sensors = new ArrayList<>();
 
         for (SensorType type : sensorTypes) {
             Sensor sensor = new Sensor();
@@ -177,8 +173,6 @@ public class PlantService {
             sensor.setPlant(plant);
             plant.getSensors().add(sensor);
         }
-
-        return sensors;
     }
 
     private Optional<Long> getUserId() {

@@ -8,23 +8,21 @@ import irrigationsystem.model.MeasureTypeEnum;
 import java.util.Map;
 
 public class AnalyzerFactory {
+    private AnalyzerFactory() {
+        /* This utility class should not be instantiated */
+    }
+
 
     public static Analyzer createAnalyzer(Long plantId, PlantType plantType, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> values) {
 
         PlantTypeEnum plantTypeEnum = PlantTypeEnum.getValue(plantType.getId());
 
-        switch (plantTypeEnum ) {
-            case Tomato:
-                return new TomatoAnalyzer(plantId, growthPhase, values);
-            case Strawberry:
-                return new StrawberryAnalyzer(plantId, growthPhase, values);
-            case Potato:
-                return new PotatoAnalyzer(plantId, growthPhase, values);
-            case Carrot:
-                return new CarrotAnalyzer(plantId, growthPhase, values);
-            default:
-                throw new IllegalArgumentException("Unknown sensor type: " + plantType);
-        }
-
+        return switch (plantTypeEnum) {
+            case Tomato -> new TomatoAnalyzer(plantId, growthPhase, values);
+            case Strawberry -> new StrawberryAnalyzer(plantId, growthPhase, values);
+            case Potato -> new PotatoAnalyzer(plantId, growthPhase, values);
+            case Carrot -> new CarrotAnalyzer(plantId, growthPhase, values);
+            default -> throw new IllegalArgumentException("Unknown sensor type: " + plantType);
+        };
     }
 }

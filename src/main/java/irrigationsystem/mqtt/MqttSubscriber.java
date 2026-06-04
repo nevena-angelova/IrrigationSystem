@@ -159,7 +159,6 @@ public class MqttSubscriber {
                         case Humidity -> humidity;
                         case Light -> light;
                         case SoilMoisture -> soilMoisture;
-                        default -> null;
                     };
 
                     if (value != null) {

@@ -9,6 +9,10 @@
   --button-hover: #172026;
   --mint-form-bg: #e6feed;
   --light-form-bg: #fafffb;
+  --form-toggle-text: #004d40dd;
+  --form-toggle-link: #00796b;
+  --form-toggle-link-hover: #004d40;
+  --transition-fast: 0.3s ease;
 }
 
 body, html {
@@ -83,9 +87,31 @@ select:focus {
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px var(--white) inset !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--white) inset !important;
   -webkit-text-fill-color: var(--dark-text) !important;
   border: 2px solid var(--border-gray) !important;
   border-radius: 0.5rem;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Toggle link */
+.form-toggle {
+  text-align: center;
+  margin-top: 1.4rem;
+  font-size: 0.9rem;
+  color: var(--form-toggle-text);
+  user-select: none;
+}
+
+.form-toggle a {
+  color: var(--form-toggle-link);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  cursor: pointer;
+}
+
+.form-toggle a:hover {
+  color: var(--form-toggle-link-hover);
+  text-decoration: underline;
 }

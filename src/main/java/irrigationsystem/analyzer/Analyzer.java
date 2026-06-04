@@ -16,12 +16,20 @@ that is used while analyzing data
 public abstract class Analyzer {
     private final Map<MeasureTypeEnum, Double> measureValues;
     private final GrowthPhase growthPhase;
-    private ReportDto report;
+    private final ReportDto report;
+    private final double temperature;
+    private final double soilMoisture;
+    private final double humidity;
+    private final double light;
 
-    public Analyzer(Long plantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues) {
+    protected Analyzer(Long plantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues) {
         this.measureValues = measureValues;
         this.growthPhase = growthPhase;
         this.report = new ReportDto(plantId, growthPhase);
+        this.temperature = this.measureValues.get(MeasureTypeEnum.Temperature);
+        this.soilMoisture = this.measureValues.get(MeasureTypeEnum.SoilMoisture);
+        this.humidity = this.measureValues.get(MeasureTypeEnum.Humidity);
+        this.light = this.measureValues.get(MeasureTypeEnum.Light);
     }
 
     protected ReportDto getReport() {
@@ -29,19 +37,19 @@ public abstract class Analyzer {
     }
 
     protected double getSoilMoisture() {
-        return this.measureValues.get(MeasureTypeEnum.SoilMoisture);
+        return this.soilMoisture;
     }
 
     protected double getTemperature() {
-        return this.measureValues.get(MeasureTypeEnum.Temperature);
+        return this.temperature;
     }
 
     protected double getHumidity() {
-        return this.measureValues.get(MeasureTypeEnum.Humidity);
+        return this.humidity;
     }
 
-    protected  double getLight(){
-        return this.measureValues.get(MeasureTypeEnum.Light);
+    protected double getLight() {
+        return this.light;
     }
 
     protected double getMinSoilMoisture() {

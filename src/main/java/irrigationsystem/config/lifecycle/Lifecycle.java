@@ -2,6 +2,7 @@ package irrigationsystem.config.lifecycle;
 
 import irrigationsystem.model.GrowthPhase;
 import irrigationsystem.model.PlantType;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -12,17 +13,15 @@ The lifecycle consists of several phases.
 
 */
 
+@Getter
 public abstract class Lifecycle {
 
     protected final PlantType plantType;
 
-    public Lifecycle(PlantType plantType) {
+    protected Lifecycle(PlantType plantType) {
         this.plantType = plantType;
     }
 
     protected abstract List<GrowthPhase> getPhases();
 
-    public PlantType getPlantType(){
-        return plantType;
-    }
 }

@@ -9,8 +9,7 @@ import {User} from '../../../model/user.model';
   imports: [
     CommonModule, ReactiveFormsModule
   ],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  templateUrl: './login.component.html'
 })
 export class LoginComponent {
   userForm: FormGroup;

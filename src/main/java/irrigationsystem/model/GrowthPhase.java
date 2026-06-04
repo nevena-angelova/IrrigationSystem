@@ -1,30 +1,39 @@
 package irrigationsystem.model;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import lombok.Getter;
 
 @Entity
 @Table(name = "growth_phases")
 public class GrowthPhase {
 
     @Id
+    @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Getter
     @Column(name="start_day", nullable = false)
     private int startDay;
 
+    @Getter
     @Column(name="end_day", nullable = false)
     private int endDay;
 
+    @Getter
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = true)
+    @Getter
+    @Column
     private String details;
 
+    @Getter
     @Column(nullable = false)
     private double minSoilMoisture;
 
+    @Getter
     @Column(nullable = false)
     private double maxSoilMoisture;
 
@@ -32,6 +41,7 @@ public class GrowthPhase {
     @JoinColumn(name = "plant_type_id", nullable = false)
     private PlantType plantType;
 
+    @Getter
     @Column(name="irrigation_duration", nullable = false)
     private int irrigationDuration;
 
@@ -50,40 +60,7 @@ public class GrowthPhase {
         this.irrigationDuration = irrigationDuration;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public double getMinSoilMoisture() {
-        return minSoilMoisture;
-    }
-
-    public double getMaxSoilMoisture() {
-        return maxSoilMoisture;
-    }
-
-    public int getStartDay() {
-        return startDay;
-    }
-
-    public int getEndDay() {
-        return endDay;
-    }
-
-    public Integer getPlantTypeId() {
+  public Integer getPlantTypeId() {
         return plantType.getId();
     }
-
-    public int getIrrigationDuration() {
-        return irrigationDuration;
-    }
-
 }

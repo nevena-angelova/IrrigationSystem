@@ -1,10 +1,14 @@
 package irrigationsystem.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "measure_types")
 public class MeasureType {
@@ -21,36 +25,4 @@ public class MeasureType {
 
     @ManyToMany(mappedBy = "measureTypes")
     private List<SensorType> sensorTypes = new ArrayList<>();
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    public List<SensorType> getSensorTypes() {
-        return sensorTypes;
-    }
-
-    public void setSensorTypes(List<SensorType>  sensorTypes) {
-        this.sensorTypes = sensorTypes;
-    }
 }

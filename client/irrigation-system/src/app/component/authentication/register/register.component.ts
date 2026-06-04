@@ -9,7 +9,6 @@ import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angula
     ReactiveFormsModule
   ],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
 })
 
 export class RegisterComponent {

@@ -1,5 +1,8 @@
 package irrigationsystem.model;
 
+import lombok.Getter;
+
+@Getter
 public enum MeasureTypeEnum {
     Temperature(1),
     Humidity(2),
@@ -13,7 +16,4 @@ public enum MeasureTypeEnum {
         this.value = value;
     }
 
-    public int getValue() {
-        return value;
-    }
 }

@@ -31,8 +31,7 @@ public class SeedDataConfig implements CommandLineRunner {
     private final GrowthPhaseRepository growthPhaseRepository;
 
     @Override
-    public void run(String... args) throws Exception {
-
+    public void run(String... args) {
         seedMeasureAndSensorTypes();
         seedAdminUserWithDeviceAndSensors();
         seedPlantsAndGrowthPhases();

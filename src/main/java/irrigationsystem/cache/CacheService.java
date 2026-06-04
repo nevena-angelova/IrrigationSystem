@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +35,7 @@ public class CacheService {
         long days = ChronoUnit.DAYS.between(plantingDate, LocalDate.now());
 
         for (GrowthPhase phase : growthPhases()) {
-            if (phase.getPlantTypeId() == plantTypeId &&  days >= phase.getStartDay() && days <= phase.getEndDay()) {
+            if (Objects.equals(phase.getPlantTypeId(), plantTypeId) &&  days >= phase.getStartDay() && days <= phase.getEndDay()) {
                 return phase;
             }
         }
@@ -44,7 +45,7 @@ public class CacheService {
 
     public PlantType getPlantType(Integer plantTypeId) {
         for (PlantType plantType : plantTypes()) {
-            if (plantType.getId() == plantTypeId) {
+            if (Objects.equals(plantType.getId(), plantTypeId)) {
                 return plantType;
             }
         }

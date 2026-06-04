@@ -26,48 +26,48 @@ import irrigationsystem.dto.UserDto;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
-    private final Mapper mapper;
+  private final UserRepository userRepository;
+  private final RoleRepository roleRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final JwtUtil jwtUtil;
+  private final AuthenticationManager authenticationManager;
+  private final Mapper mapper;
 
-    public ResponseDto<JwtResponse> register(UserDto userDto) {
+  public ResponseDto<JwtResponse> register(UserDto userDto) {
 
-        Role role = roleRepository.findByName(RoleEnum.USER.name());
+    Role role = roleRepository.findByName(RoleEnum.USER.name());
 
-        var user = mapper.fromUserDto(userDto);
-        user.setRole(role);
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+    var user = mapper.fromUserDto(userDto);
+    user.setRole(role);
+    user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-        if (user.getId() == null) {
-            user.setCreated(LocalDateTime.now());
-        }
-
-        user.setUpdated(LocalDateTime.now());
-
-        userRepository.save(user);
-
-        JwtResponse jwtResponse = new JwtResponse(jwtUtil.generateToken(user));
-
-        return ResponseDto.<JwtResponse>builder().value(jwtResponse).build();
+    if (user.getId() == null) {
+      user.setCreated(LocalDateTime.now());
     }
 
-    public ResponseDto<JwtResponse> login(UserDto userDto) {
-        try {
-            // check user in the database, it is configured to filter using UserService
-            var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword()));
+    user.setUpdated(LocalDateTime.now());
 
-            var user = (User) authentication.getPrincipal();
+    userRepository.save(user);
 
-            JwtResponse jwtResponse = new JwtResponse(jwtUtil.generateToken(user));
+    JwtResponse jwtResponse = new JwtResponse(jwtUtil.generateToken(user));
 
-            return ResponseDto.<JwtResponse>builder().value(jwtResponse).build();
+    return ResponseDto.<JwtResponse>builder().value(jwtResponse).build();
+  }
 
-        } catch (AuthenticationException e) {
+  public ResponseDto<JwtResponse> login(UserDto userDto) {
+    try {
+      // check user in the database, it is configured to filter using UserService
+      var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword()));
 
-            return ResponseDto.<JwtResponse>builder().errorMessage(Optional.of("Invalid credentials")).hasErrors(true).build();
-        }
+      var user = (User) authentication.getPrincipal();
+
+      JwtResponse jwtResponse = new JwtResponse(jwtUtil.generateToken(user));
+
+      return ResponseDto.<JwtResponse>builder().value(jwtResponse).build();
+
+    } catch (AuthenticationException e) {
+
+      return ResponseDto.<JwtResponse>builder().errorMessage(Optional.of("Invalid credentials")).hasErrors(true).build();
     }
+  }
 }

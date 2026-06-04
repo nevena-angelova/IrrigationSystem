@@ -1,5 +1,8 @@
 package irrigationsystem.model;
 
+import lombok.Getter;
+
+@Getter
 public enum PlantTypeEnum {
     Tomato(1),
     Strawberry(2),
@@ -10,10 +13,6 @@ public enum PlantTypeEnum {
 
     PlantTypeEnum(int value) {
         this.value = value;
-    }
-
-    public int getValue() {
-        return value;
     }
 
     public static PlantTypeEnum getValue(int id) {

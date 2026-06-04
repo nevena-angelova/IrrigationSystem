@@ -1,7 +1,11 @@
 package irrigationsystem.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "plant_types")
 public class PlantType {
@@ -11,20 +15,4 @@ public class PlantType {
 
     @Column(unique = true, nullable = false)
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getId() {
-        return id;
-    }
 }

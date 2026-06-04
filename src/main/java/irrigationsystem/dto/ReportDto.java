@@ -42,7 +42,7 @@ public class ReportDto {
     private int irrigationDuration;
 
     @Getter
-    private List<String> warnings;
+    private final List<String> warnings;
 
     public ReportDto(Long plantId, GrowthPhase growthPhase) {
         this.plantId = plantId;

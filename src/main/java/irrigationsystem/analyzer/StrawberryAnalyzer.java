@@ -14,56 +14,51 @@ public class StrawberryAnalyzer  extends Analyzer {
     @Override
     public ReportDto analyze() {
 
-        double temperature = getTemperature();
-        double soilMoisture = getSoilMoisture();
-        double humidity = getHumidity();
-        double light = getLight();
-
-        if (soilMoisture < getMinSoilMoisture()) {
+        if (getSoilMoisture() < getMinSoilMoisture()) {
             setReportNeedsIrrigation(true);
         }
 
-        if (soilMoisture > getMaxSoilMoisture()) {
+        if (getSoilMoisture() > getMaxSoilMoisture()) {
             addReportWarning("Почвата е прекалено мокра – риск от гниене на корените.");
         }
 
-        if (soilMoisture < 40) {
+        if (getSoilMoisture() < 40) {
             addReportWarning("Критично ниска влажност – възможно завяхване.");
         }
 
-        if (temperature < 5.0) {
+        if (getTemperature() < 5.0) {
             addReportWarning("Температурата е твърде ниска за ягоди – риск от застой в развитието.");
-        } else if (temperature > 30.0) {
+        } else if (getTemperature()  > 30.0) {
             addReportWarning("Прекалено висока температура – възможен топлинен и воден стрес.");
         }
 
-        if (humidity > 85 && temperature >= 15 && temperature <= 25) {
+        if (getHumidity() > 85 && getTemperature()  >= 15 && getTemperature()  <= 25) {
             addReportWarning("Висока влажност и умерена температура – риск от сиво гниене (Botrytis cinerea).");
         }
 
-        if (humidity > 80 && temperature > 25) {
+        if (getHumidity()  > 80 && getTemperature()  > 25) {
             addReportWarning("Топло и влажно време – възможна поява на брашнеста мана по листата.");
         }
 
-        if (humidity < 40 && temperature > 28) {
+        if (getHumidity()  < 40 && getTemperature()  > 28) {
             addReportWarning("Сух и горещ въздух – риск от загуба на влага, пригори и по-слабо плододаване.");
         }
 
-        if (temperature < 12 && humidity > 90 && soilMoisture > 80) {
+        if (getTemperature()  < 12 && getHumidity()  > 90 && getSoilMoisture() > 80) {
             addReportWarning("Хладно и влажно време – възможно развитие на кореново гниене (Phytophthora fragariae).");
         }
 
-        if (soilMoisture > 80 && humidity > 90) {
+        if (getSoilMoisture() > 80 && getHumidity()  > 90) {
             addReportWarning("Продължителна влажност – възможна поява на сиво гниене и плесен върху плодовете.");
         }
 
-        if (soilMoisture < 50 && humidity < 40 && temperature > 30) {
+        if (getSoilMoisture() < 50 && getHumidity()  < 40 && getTemperature()  > 30) {
             addReportWarning("Горещо и сухо време – растенията изпитват стрес, възможно спиране на плододаването.");
         }
 
-        if (light < 20000) {
+        if (getLight() < 20000) {
             addReportWarning("Недостатъчно осветление – растенията може да забавят растежа и плододаването.");
-        } else if (light > 80000) {
+        } else if (getLight() > 80000) {
             addReportWarning("Прекалено силно осветление – възможен стрес за растенията, риск от изгаряне на листата.");
         }
 
