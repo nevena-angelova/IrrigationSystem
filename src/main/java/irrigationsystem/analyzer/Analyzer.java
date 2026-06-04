@@ -4,7 +4,9 @@ import irrigationsystem.dto.ReportDto;
 import irrigationsystem.model.GrowthPhase;
 import irrigationsystem.model.MeasureTypeEnum;
 
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /*
 A base class used to analyze sensor measure values
@@ -21,6 +23,7 @@ public abstract class Analyzer {
     private final double soilMoisture;
     private final double humidity;
     private final double light;
+    private final ResourceBundle messages = ResourceBundle.getBundle("messages", new Locale("bg"));
 
     protected Analyzer(Long plantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues) {
         this.measureValues = measureValues;
@@ -67,6 +70,6 @@ public abstract class Analyzer {
     }
 
     protected void addReportWarning(String warning) {
-        this.report.addWarning(warning);
+        this.report.addWarning(messages.getString(warning));
     }
 }

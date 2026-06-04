@@ -13,48 +13,53 @@ public class PotatoAnalyzer extends Analyzer {
 
     @Override
     public ReportDto analyze() {
+
         if (getSoilMoisture() < getMinSoilMoisture()) {
             setReportNeedsIrrigation(true);
         }
 
         if (getSoilMoisture() > getMaxSoilMoisture()) {
-            addReportWarning("Почвата е прекалено мокра – риск от гниене на клубените.");
+            addReportWarning("warning.potato.soil.too.wet");
         }
 
         if (getSoilMoisture() < 35) {
-            addReportWarning("Критично ниска влажност – възможно завяхване.");
+            addReportWarning("warning.potato.soil.critical.low");
         }
 
         if (getTemperature() < 7.0) {
-            addReportWarning("Температурата е твърде ниска – риск от застой в развитието.");
+            addReportWarning("warning.potato.temp.low");
         } else if (getTemperature() > 30.0) {
-            addReportWarning("Прекалено висока температура – възможен топлинен и воден стрес.");
+            addReportWarning("warning.potato.temp.high");
         }
 
-        if (getTemperature() >= 15 && getTemperature() <= 25 && getHumidity() > 85 && getSoilMoisture() > 75) {
-            addReportWarning("Висока влажност и умерена температура – риск от мана по картофите (Phytophthora infestans).");
+        if (getTemperature() >= 15 && getTemperature() <= 25 &&
+            getHumidity() > 85 && getSoilMoisture() > 75) {
+
+            addReportWarning("warning.potato.mildew");
         }
 
         if (getTemperature() > 25 && getHumidity() > 80) {
-            addReportWarning("Топло и влажно време – възможна поява на алтернария (кафяви петна по листата).");
+            addReportWarning("warning.potato.alternaria");
         }
 
-        if (getTemperature() >= 10 && getTemperature() <= 20 && getSoilMoisture() > 85) {
-            addReportWarning("Почвата е прекалено влажна и хладна – възможно развитие на сиво гниене (Botrytis).");
+        if (getTemperature() >= 10 && getTemperature() <= 20 &&
+            getSoilMoisture() > 85) {
+
+            addReportWarning("warning.potato.gray.mold");
         }
 
         if (getHumidity() < 40 && getTemperature() > 28 && getSoilMoisture() < 50) {
-            addReportWarning("Горещо и сухо време – риск от воден стрес и деформирани клубени.");
+            addReportWarning("warning.potato.heat.dry");
         }
 
         if (getHumidity() > 90 && getTemperature() < 15) {
-            addReportWarning("Продължителна висока влажност и ниска температура – възможно развитие на бактериални гниения.");
+            addReportWarning("warning.potato.bacterial.rot");
         }
 
         if (getLight() < 15000) {
-            addReportWarning("Недостатъчно осветление – растенията може да забавят растежа и плододаването.");
+            addReportWarning("warning.potato.low.light");
         } else if (getLight() > 90000) {
-            addReportWarning("Прекалено силно осветление – възможен стрес за растенията, риск от изгаряне на листата.");
+            addReportWarning("warning.potato.high.light");
         }
 
         return getReport();

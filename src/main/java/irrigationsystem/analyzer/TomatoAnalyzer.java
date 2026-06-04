@@ -20,51 +20,51 @@ public class TomatoAnalyzer extends Analyzer {
         }
 
         if (getSoilMoisture() > getMaxSoilMoisture()) {
-            addReportWarning("Почвата е прекалено мокра – риск от гниене на корените.");
+            addReportWarning("warning.tomato.soil.too.wet");
         }
 
         if (getSoilMoisture() < 40) {
-            addReportWarning("Критично ниска влажност – възможно завяхване.");
+            addReportWarning("warning.tomato.soil.critical.low");
         }
 
         if (getTemperature() < 12.0) {
-            addReportWarning("Температурата е твърде ниска за домати. ");
-        } else if (getTemperature()  > 32.0) {
-            addReportWarning("Температурата е твърде висока – риск от стрес.");
+            addReportWarning("warning.tomato.temp.low");
+        } else if (getTemperature() > 32.0) {
+            addReportWarning("warning.tomato.temp.high");
         }
 
-        if (getHumidity() > 85 && getTemperature()  >= 18 && getTemperature()  <= 25) {
-            addReportWarning("Висока влажност и умерена температура – идеални условия за развитие на мана (Phytophthora infestans).");
+        if (getHumidity() > 85 && getTemperature() >= 18 && getTemperature() <= 25) {
+            addReportWarning("warning.tomato.mildew");
         }
 
-        if (getHumidity() > 80 && getTemperature()  > 26) {
-            addReportWarning("Топло и влажно време – риск от брашнеста мана и гъбични инфекции по листата.");
+        if (getHumidity() > 80 && getTemperature() > 26) {
+            addReportWarning("warning.tomato.fungal.infections");
         }
 
         if (getHumidity() < 40 && getTemperature() > 30) {
-            addReportWarning("Сух и горещ въздух – възможен стрес и върхово гниене (дефицит на калций).");
+            addReportWarning("warning.tomato.heat.dry.stress");
         }
 
         if (getSoilMoisture() > 80 && getHumidity() > 85) {
-            addReportWarning("Продължителна влажност на почвата и въздуха – риск от мана и бактериално петносване.");
+            addReportWarning("warning.tomato.moisture.excess");
         }
 
         if (getSoilMoisture() < 50 && getHumidity() < 40 && getTemperature() > 30) {
-            addReportWarning("Горещо и сухо време – риск от пригори и деформации на плодовете.");
+            addReportWarning("warning.tomato.fruit.deformation");
         }
 
         if (getTemperature() > 35 && getHumidity() < 35) {
-            addReportWarning("Изключително горещо и сухо – възможен топлинен шок, спиране на растежа и лошо опрашване.");
+            addReportWarning("warning.tomato.heat.shock");
         }
 
         if (getTemperature() < 12 && getHumidity() > 80 && getSoilMoisture() > 75) {
-            addReportWarning("Хладно и влажно време – риск от бактериални болести по стъблата и листата.");
+            addReportWarning("warning.tomato.bacterial.diseases");
         }
 
         if (getLight() < 20000) {
-            addReportWarning("Недостатъчно осветление – растенията може да забавят растежа и плододаването.");
+            addReportWarning("warning.tomato.low.light");
         } else if (getLight() > 100000) {
-            addReportWarning("Прекалено силно осветление – възможен стрес за растенията, риск от изгаряне на листата.");
+            addReportWarning("warning.tomato.high.light");
         }
 
         return getReport();

@@ -15,5 +15,4 @@ public enum MeasureTypeEnum {
     MeasureTypeEnum(int value) {
         this.value = value;
     }
-
 }

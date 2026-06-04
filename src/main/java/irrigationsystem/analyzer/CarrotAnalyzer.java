@@ -19,45 +19,47 @@ public class CarrotAnalyzer extends Analyzer {
         }
 
         if (getSoilMoisture() > getMaxSoilMoisture()) {
-            addReportWarning("Почвата е прекалено мокра – риск от кореново гниене.");
+            addReportWarning("warning.carrot.soil.too.wet");
         }
 
         if (getSoilMoisture() < 35) {
-            addReportWarning("Критично ниска влажност – възможна деформация на корените");
+            addReportWarning("warning.carrot.soil.critical.low");
         }
 
         if (getTemperature() < 5.0) {
-            addReportWarning("Температурата е твърде ниска – риск от застой в развитието.");
+            addReportWarning("warning.carrot.temp.low");
         } else if (getTemperature() > 28.0) {
-            addReportWarning("Прекалено висока температура – риск от преждевременно цъфтеж или горчив вкус");
+            addReportWarning("warning.carrot.temp.high");
         }
 
         if (getHumidity() < 40.0) {
-            addReportWarning("Влажността на въздуха е твърде ниска – ускорено изпарение и стрес за растенията.");
+            addReportWarning("warning.carrot.humidity.low");
         } else if (getHumidity() > 85.0) {
-            addReportWarning("Влажността на въздуха е прекалено висока – риск от брашнеста мана и бактериални инфекции.");
+            addReportWarning("warning.carrot.humidity.high");
         }
 
         if (getHumidity() > 80.0 && getSoilMoisture() > 80.0) {
-            addReportWarning("Висока влажност на въздуха и почвата – риск от плесен и гниене на корените.");
+            addReportWarning("warning.carrot.soil.air.high.moisture");
         }
 
         if (getTemperature() > 25 && getHumidity() > 80) {
-            addReportWarning("Висока температура и влажност – риск от алтернария (черно листно петно).");
+            addReportWarning("warning.carrot.alternaria");
         }
 
-        if (getTemperature() >= 15 && getTemperature() <= 25 && getHumidity() > 85 && getSoilMoisture() > 80) {
-            addReportWarning("Прекалено влажна среда – възможна бяла плесен (Sclerotinia).");
+        if (getTemperature() >= 15 && getTemperature() <= 25 &&
+            getHumidity() > 85 && getSoilMoisture() > 80) {
+
+            addReportWarning("warning.carrot.sclerotinia");
         }
 
         if (getTemperature() > 20 && getSoilMoisture() > 85) {
-            addReportWarning("Топла и влажна почва – риск от кореново гниене.");
+            addReportWarning("warning.carrot.root.rot");
         }
 
         if (getLight() < 15000) {
-            addReportWarning("Недостатъчно осветление – растенията може да забавят растежа и плододаването.");
+            addReportWarning("warning.carrot.low.light");
         } else if (getLight() > 90000) {
-            addReportWarning("Прекалено силно осветление – възможен стрес за растенията, риск от изгаряне на листата.");
+            addReportWarning("warning.carrot.high.light");
         }
 
         return getReport();
