@@ -14,66 +14,56 @@ public class PotatoLifecycle extends Lifecycle {
     @Override
     public List<GrowthPhase> getPhases() {
         return List.of(
-                new GrowthPhase(
-                        0,
-                        14,
-                        "Кълняване и поникване",
-                        "Поддържай почвата влажна и топла (15–20°C). Поливай леко. Не тори на този етап. Следи за равномерно поникване.",
-                        70.0,
-                        85.0,
-                        plantType,
-                        5
-                ),
-                new GrowthPhase(
-                        15,
-                        45,
-                        "Вегетативен растеж",
-                        "Поливай редовно, тори с азотен тор. Окучи растенията, когато достигнат 15–20 см височина. Следи за плевели и вредители.",
-                        65.0,
-                        80.0,
-                        plantType,
-                        7
-                ),
-                new GrowthPhase(
-                        46,
-                        60,
-                        "Цъфтеж",
-                        "Поливай равномерно, за да избегнеш стрес. Започни подхранване с фосфор и калий. Продължи окопаване при нужда.",
-                        75.0,
-                        85.0,
-                        plantType,
-                        6
-                ),
-                new GrowthPhase(
-                        61,
-                        90,
-                        "Образуване на клубени",
-                        "Поддържай умерена влажност на почвата. Не прекалявай с азот. Осигури добро проветряване и наблюдавай за мана и колорадски бръмбар.",
-                        75.0,
-                        80.0,
-                        plantType,
-                        8
-                ),
-                new GrowthPhase(
-                        91,
-                        120,
-                        "Узряване на клубени",
-                        "Намали поливането. Изчакай пожълтяване на листата. Спри торенето. Прибери клубените, след като растенията изсъхнат.",
-                        70.0,
-                        75.0,
-                        plantType,
-                        5
-                ),
-                new GrowthPhase(
-                        121,
-                        Integer.MAX_VALUE,
-                        "Неизвестно",
-                        "Няма информация.",
-                        60.0,
-                        60.0,
-                        plantType,
-                        3
-                )
+            new GrowthPhase(
+                0,
+                24,
+                getMessage("phase.potato.initial.name"),
+                getMessage("phase.potato.initial.description"),
+                70.0,
+                85.0,
+                plantType,
+                5
+            ),
+            new GrowthPhase(
+                25,
+                54,
+                getMessage("phase.potato.development.name"),
+                getMessage("phase.potato.development.description"),
+                65.0,
+                80.0,
+                plantType,
+                7
+            ),
+            new GrowthPhase(
+                55,
+                99,
+                getMessage("phase.potato.midseason.name"),
+                getMessage("phase.potato.midseason.description"),
+                75.0,
+                85.0,
+                plantType,
+                8
+            ),
+            new GrowthPhase(
+                100,
+                129,
+                getMessage("phase.potato.late.name"),
+                getMessage("phase.potato.late.description"),
+                65.0,
+                75.0,
+                plantType,
+                5
+            ),
+            new GrowthPhase(
+                130,
+                Integer.MAX_VALUE,
+                getMessage("phase.potato.unknown.name"),
+                getMessage("phase.potato.unknown.description"),
+                60.0,
+                60.0,
+                plantType,
+                3
+            )
         );
     }
 }

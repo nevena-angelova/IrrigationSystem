@@ -5,6 +5,7 @@ import irrigationsystem.model.PlantType;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 /*
 
@@ -17,9 +18,14 @@ The lifecycle consists of several phases.
 public abstract class Lifecycle {
 
     protected final PlantType plantType;
+    private final ResourceBundle messages = ResourceBundle.getBundle("messages");
 
     protected Lifecycle(PlantType plantType) {
         this.plantType = plantType;
+    }
+
+    protected String getMessage(String key) {
+        return messages.getString(key);
     }
 
     protected abstract List<GrowthPhase> getPhases();
