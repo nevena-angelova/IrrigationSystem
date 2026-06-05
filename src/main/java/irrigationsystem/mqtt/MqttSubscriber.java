@@ -49,7 +49,9 @@ public class MqttSubscriber {
 
     private MqttClient client;
 
-    // Starts MQTT listener when the app is completely ready
+    /*
+    Starts MQTT listener when the app is completely ready
+    */
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
         start();
@@ -76,23 +78,33 @@ public class MqttSubscriber {
                     double light = json.get("light").asDouble();
                     double soilMoisture = json.get("soilMoisture").asDouble();
 
-                    // get sensors for a device
+                    /*
+                    Get sensors for a device
+                     */
                     List<Sensor> sensors = sensorRepository.findByDeviceId(deviceId);
                     if (sensors == null || sensors.isEmpty()) {
                         log.warn("No sensors found for device {}", deviceId);
                         return;
                     }
 
-                    // Organize sensor data by plant
+                    /*
+                    Organize sensor data by plant
+                     */
                     SensorProcessingResult result = processSensorMeasurements(sensors, temperature, humidity, light, soilMoisture);
 
-                    // Analyze data and generate reports
+                    /*
+                    Analyze data and generate reports
+                     */
                     List<ReportDto> reports = analyze(result.plantMeasures());
 
-                    // Send web socket notifications
+                    /*
+                    Send web socket notifications
+                     */
                     reports.forEach(notificationController::sendReport);
 
-                    // Bulk save data in database
+                    /*
+                     Bulk save data in database
+                     */
                     sensorDataRepository.saveAll(result.sensorData());
 
                 } catch (Exception e) {
@@ -174,8 +186,8 @@ public class MqttSubscriber {
 
             if (!sensorValues.isEmpty()) {
                 plantMeasures
-                        .computeIfAbsent(sensor.getPlant(), k -> new EnumMap<>(MeasureTypeEnum.class))
-                        .putAll(sensorValues);
+                    .computeIfAbsent(sensor.getPlant(), k -> new EnumMap<>(MeasureTypeEnum.class))
+                    .putAll(sensorValues);
             }
         }
 

@@ -53,17 +53,17 @@ public class PlantService {
         plant.setRelayNumber(1);
 
         /*
-         Save the plant after relay is set
+        Save the plant after relay is set
          */
         plantRepository.save(plant);
 
         /*
-          Attach sensors
+        Attach sensors
          */
         attachSensors(plant, device);
 
        /*
-        Save again only if the plant needs to have updated sensor references
+       Save again only if the plant needs to have updated sensor references
         */
         plantRepository.save(plant);
 
@@ -80,7 +80,7 @@ public class PlantService {
         List<MeasureValuesDto> measures = sensorDataRepository.getLatestValuesByUserId(userId.get());
 
         /*
-          Group measures by Plant ID, then for each group create a PlantDto with the latest measure values and an analysis report.
+        Group measures by Plant ID, then for each group create a PlantDto with the latest measure values and an analysis report.
         */
         List<PlantDto> plants =
                 measures.stream()
@@ -98,7 +98,7 @@ public class PlantService {
         List<MeasureValuesDto> measures = sensorDataRepository.getLatestValuesAllUsers();
 
        /*
-          Group measures by Plant ID, then for each group create a PlantDto with the latest measure values and an analysis report.
+       Group measures by Plant ID, then for each group create a PlantDto with the latest measure values and an analysis report.
         */
       return measures.stream()
                         .collect(Collectors.groupingBy(MeasureValuesDto::getPlantId))
@@ -158,8 +158,8 @@ public class PlantService {
     }
 
     /*
-        Every plant has a temperature, soilMoisture and a pressure sensor attached
-        Sensor has type and each type can measure one or two parameters
+    Every plant has a temperature, soilMoisture and a pressure sensor attached
+    Sensor has type and each type can measure one or two parameters
     */
 
     private void attachSensors(Plant plant, Device device) {

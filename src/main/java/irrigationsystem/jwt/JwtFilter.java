@@ -51,7 +51,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
             String username = jwtUtil.extractUsername(jwtToken);
 
-            // username not empty and user not logged
+            /*
+               Username is not empty and the user is not logged
+             */
             if (StringUtils.isNotEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 UserDetails userDetails = userService.loadUserByUsername(username);

@@ -56,7 +56,9 @@ public class AuthenticationService {
 
   public ResponseDto<JwtResponse> login(UserDto userDto) {
     try {
-      // check user in the database, it is configured to filter using UserService
+      /*
+      Check user in the database, it is configured to filter using UserService
+       */
       var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword()));
 
       var user = (User) authentication.getPrincipal();

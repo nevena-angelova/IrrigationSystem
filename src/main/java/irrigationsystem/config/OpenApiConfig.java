@@ -10,7 +10,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Collections;
 
-// Swagger JWT configuration
+/*
+    Swagger JWT configuration
+ */
 
 @Configuration
 public class OpenApiConfig {
@@ -19,16 +21,16 @@ public class OpenApiConfig {
         final String securitySchemeName = "bearerAuth";
 
         return new OpenAPI()
-                .info(new Info().title("My API").version("v1"))
-                .addSecurityItem(new SecurityRequirement()
-                        .addList(securitySchemeName, Collections.emptyList()))
-                .components(new Components()
-                        .addSecuritySchemes(securitySchemeName,
-                                new SecurityScheme()
-                                        .name(securitySchemeName)
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")
-                        ));
+            .info(new Info().title("My API").version("v1"))
+            .addSecurityItem(new SecurityRequirement()
+                .addList(securitySchemeName, Collections.emptyList()))
+            .components(new Components()
+                .addSecuritySchemes(securitySchemeName,
+                    new SecurityScheme()
+                        .name(securitySchemeName)
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")
+                ));
     }
 }

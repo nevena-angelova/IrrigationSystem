@@ -8,10 +8,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /*
-
 Base class that represents plant lifecycle.
 The lifecycle consists of several phases.
-
 */
 
 @Getter
