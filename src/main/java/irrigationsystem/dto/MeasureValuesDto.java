@@ -13,6 +13,6 @@ public interface MeasureValuesDto {
     String getMeasureType();
     Integer getMeasureTypeId();
     Double getValue();
-    OffsetDateTime getTs();
+    OffsetDateTime getCreationDate();
     Integer getDeviceId();
 }

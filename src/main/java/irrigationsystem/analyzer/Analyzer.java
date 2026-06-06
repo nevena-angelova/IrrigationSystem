@@ -4,18 +4,20 @@ import irrigationsystem.dto.ReportDto;
 import irrigationsystem.model.GrowthPhase;
 import irrigationsystem.model.MeasureTypeEnum;
 
+import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-/*
-A base class used to analyze sensor measure values
-Each successor implements its own logic for the method analyze()
-The class has a reference to GrowthPhaseInfo that keeps information about plant lifecycle
-that is used while analyzing data
+/**
+ * A base class used to analyze sensor measure values
+ * Each successor implements its own logic for the method analyze()
+ * The class has a reference to GrowthPhaseInfo that keeps information about plant lifecycle
+ * that is used while analyzing data
  */
 
 public abstract class Analyzer {
+    private final EvapotranspirationCalculator evapotranspirationCalculator = new EvapotranspirationCalculator();
     private final Map<MeasureTypeEnum, Double> measureValues;
     private final GrowthPhase growthPhase;
     private final ReportDto report;
@@ -63,7 +65,6 @@ public abstract class Analyzer {
         return growthPhase.getMaxSoilMoisture();
     }
 
-    public abstract ReportDto analyze();
 
     protected void setReportNeedsIrrigation(boolean needsIrrigation) {
         this.report.setNeedsIrrigation(needsIrrigation);
@@ -72,4 +73,18 @@ public abstract class Analyzer {
     protected void addReportWarning(String warning) {
         this.report.addWarning(messages.getString(warning));
     }
+
+    public abstract ReportDto analyze();
+
+/*    protected double calculateEvapotranspiration(){
+        double etC = evapotranspirationCalculator.calculateETc(
+            12, 25, 18,
+            60, 85,
+            42.7,     // София
+            550,      // надморска височина
+            LocalDate.now().getDayOfYear(),
+            0.85      // Kc за култура
+        );
+    }*/
+
 }

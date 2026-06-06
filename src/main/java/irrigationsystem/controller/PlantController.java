@@ -1,10 +1,7 @@
 package irrigationsystem.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import irrigationsystem.dto.CreatePlantDto;
-import irrigationsystem.dto.PlantDto;
-import irrigationsystem.dto.PlantTypeDto;
-import irrigationsystem.dto.ResponseDto;
+import irrigationsystem.dto.*;
 import irrigationsystem.service.PlantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +50,7 @@ public class PlantController {
     @Operation(summary = "Get user Plants", description = "Get all Plants for particular user.")
     public ResponseEntity getPlants() {
         try {
-            ResponseDto<List<PlantDto>> result = plantService.getUserPlants();
+            ResponseDto<List<PlantReportDto>> result = plantService.getUserPlantReports();
 
             if (result.hasErrors()) {
                 return ResponseEntity.badRequest().body(result.getErrorMessage());

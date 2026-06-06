@@ -1,10 +1,13 @@
 package irrigationsystem;
 
+import irrigationsystem.model.SensorData;
+import irrigationsystem.service.MqttService;
+import irrigationsystem.service.SensorDataService;
 import org.springframework.scheduling.annotation.Scheduled;
 
 public class IrrigationScheduler {
 
-/*    private final SensorDataService sensorDataService;
+    private final SensorDataService sensorDataService;
     private final MqttService mqttService;
 
     public IrrigationScheduler(SensorDataService sensorDataService,
@@ -13,7 +16,7 @@ public class IrrigationScheduler {
         this.mqttService = mqttService;
     }
 
-    // Every day at 08:00
+/*    // Every day at 08:00
     @Scheduled(cron = "0 0 8 * * *")
     public void checkAndWaterPlants() {
 

@@ -22,7 +22,7 @@ public class MqttPublisher {
         try (MqttClient mqttClient = new MqttClient(broker, clientId, new MemoryPersistence())) {
             mqttClient.connect();
             MqttMessage message = new MqttMessage(payload.getBytes());
-            message.setQos(1); // Set Quality of Service level - 1: broker should send back confirmation of receipt, if not it will be resent
+            message.setQos(1); /* Set Quality of Service level - 1: broker should send back confirmation of receipt, if not, it will be resent */
             mqttClient.publish(topic, message);
             mqttClient.disconnect();
             log.info("Published: {} topic: {}", payload, topic);
