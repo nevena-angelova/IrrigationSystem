@@ -87,6 +87,11 @@ public class MqttSubscriber {
                         return;
                     }
 
+                    if(sensors.getFirst().getPlant() == null) {
+                        log.warn("Sensors for device {} are not linked to any plant", deviceId);
+                        return;
+                    }
+
                     /*
                     Organize sensor data by plant
                      */
