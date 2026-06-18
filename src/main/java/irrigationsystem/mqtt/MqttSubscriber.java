@@ -4,13 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import irrigationsystem.cache.CacheService;
 import irrigationsystem.controller.NotificationController;
-import irrigationsystem.dto.ReportDto;
-import irrigationsystem.model.*;
+import irrigationsystem.entity.*;
 import irrigationsystem.repository.MeasureTypeRepository;
 import irrigationsystem.repository.SensorDataRepository;
 import irrigationsystem.repository.SensorRepository;
-import irrigationsystem.analyzer.Analyzer;
-import irrigationsystem.analyzer.AnalyzerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -49,9 +46,9 @@ public class MqttSubscriber {
 
     private MqttClient client;
 
-    /*
-    Starts MQTT listener when the app is completely ready
-    */
+    /**
+     * Starts MQTT listener when the app is completely ready
+     */
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
         start();
@@ -72,40 +69,41 @@ public class MqttSubscriber {
 
                 try {
                     JsonNode json = mapper.readTree(payload);
-                    Long deviceId = json.get("deviceId").asLong();
+                    int controllerId = json.path("controllerId").asInt(-1);
+
+                    if (controllerId == -1) {
+                        log.warn("Missing controllerId in message: {}", json);
+                        return;
+                    }
                     double temperature = json.get("temperature").asDouble();
                     double humidity = json.get("humidity").asDouble();
                     double light = json.get("light").asDouble();
-                    double soilMoisture = json.get("soilMoisture").asDouble();
 
-                    /*
-                    Get sensors for a device
-                     */
-                    List<Sensor> sensors = sensorRepository.findByDeviceId(deviceId);
-                    if (sensors == null || sensors.isEmpty()) {
-                        log.warn("No sensors found for device {}", deviceId);
-                        return;
+                    JsonNode soilMoistureNode = json.get("soilMoisture");
+
+                    List<Double> soilMoistureValues = new ArrayList<>();
+
+                    if (soilMoistureNode != null && soilMoistureNode.isArray()) {
+                        for (JsonNode value : soilMoistureNode) {
+                            soilMoistureValues.add(value.asDouble());
+                        }
                     }
 
                     /*
-                    Organize sensor data by plant
+                    Get sensors for a controller
                      */
-                    SensorProcessingResult result = processSensorMeasurements(sensors, temperature, humidity, light, soilMoisture);
+                    List<Sensor> sensors = sensorRepository.findByControllerId(controllerId);
+                    if (sensors == null || sensors.isEmpty()) {
+                        log.warn("No sensors found for controller {}", controllerId);
+                        return;
+                    }
 
-                    /*
-                    Analyze data and generate reports
-                     */
-                    List<ReportDto> reports = analyze(result.plantMeasures());
-
-                    /*
-                    Send web socket notifications
-                     */
-                    reports.forEach(notificationController::sendReport);
+                    List<SensorData> sensorData = getSensorData(sensors, temperature, humidity, light, soilMoistureValues);
 
                     /*
                      Bulk save data in database
                      */
-                    sensorDataRepository.saveAll(result.sensorData());
+                    sensorDataRepository.saveAll(sensorData);
 
                 } catch (Exception e) {
                     log.error("Error processing MQTT message", e);
@@ -119,7 +117,9 @@ public class MqttSubscriber {
         }
     }
 
-    // Ensures that when application stops the MQTT client is disconnected
+    /**
+     * Ensures that when application stops the MQTT client is disconnected
+     */
     @PreDestroy
     public void stop() {
         if (client != null && client.isConnected()) {
@@ -132,66 +132,34 @@ public class MqttSubscriber {
         }
     }
 
-    private List<ReportDto> analyze(Map<Plant, Map<MeasureTypeEnum, Double>> plantMeasures) {
-        List<ReportDto> reports = new ArrayList<>();
+    private List<SensorData> getSensorData(List<Sensor> sensors, double temperature, double humidity, double light, List<Double> soilMoisture) {
+        List<SensorData> sensorData = new ArrayList<>();
 
-        for (var measure : plantMeasures.entrySet()) {
-
-            Plant plant = measure.getKey();
-            GrowthPhase growthPhase = cacheService.getGrowthPhase(plant.getPlantingDate(), plant.getPlantType().getId());
-
-            Analyzer analyzer = AnalyzerFactory.createAnalyzer(plant.getId(), plant.getPlantType(), growthPhase, measure.getValue());
-
-            ReportDto report = analyzer.analyze();
-
-            if (report != null) {
-                reports.add(report);
-            }
-
-        }
-
-        return reports;
-    }
-
-    private SensorProcessingResult processSensorMeasurements(List<Sensor> sensors, double temperature, double humidity, double light, double soilMoisture) {
-
-        List<SensorData> data = new ArrayList<>();
-        Map<Plant, Map<MeasureTypeEnum, Double>> plantMeasures = new HashMap<>();
-
-        for (var sensor : sensors) {
-            Map<MeasureTypeEnum, Double> sensorValues = new EnumMap<>(MeasureTypeEnum.class);
-
+        for (Sensor sensor : sensors) {
             List<MeasureType> types = measureTypeRepository.findBySensorTypes_Id(sensor.getSensorType().getId());
 
-            for (var type : types) {
+            for (MeasureType type : types) {
                 try {
-                    var measureType = MeasureTypeEnum.valueOf(type.getName());
-                    Double value = switch (measureType) {
-                        case Temperature -> temperature;
-                        case Humidity -> humidity;
-                        case Light -> light;
-                        case SoilMoisture -> soilMoisture;
-                    };
+                    MeasureTypeEnum measureType = MeasureTypeEnum.valueOf(type.getName());
 
-                    if (value != null) {
-                        data.add(createSensorData(sensor, value, type));
-                        sensorValues.put(measureType, value);
+                    if (measureType == MeasureTypeEnum.Temperature) {
+                        sensorData.add(createSensorData(sensor, temperature, type));
+                    } else if (measureType == MeasureTypeEnum.Humidity) {
+                        sensorData.add(createSensorData(sensor, humidity, type));
+                    } else if (measureType == MeasureTypeEnum.Light) {
+                        sensorData.add(createSensorData(sensor, light, type));
+                    } else if (measureType == MeasureTypeEnum.SoilMoisture) {
+                        for (int i = 0; i < soilMoisture.size(); i++) {
+                            sensorData.add(createSensorData(sensor, soilMoisture.get(i), type));
+                        }
                     }
-
                 } catch (IllegalArgumentException e) {
                     log.warn("Unknown measure type: {}", type.getName());
                 }
             }
-
-
-            if (!sensorValues.isEmpty()) {
-                plantMeasures
-                    .computeIfAbsent(sensor.getPlant(), k -> new EnumMap<>(MeasureTypeEnum.class))
-                    .putAll(sensorValues);
-            }
         }
 
-        return new SensorProcessingResult(plantMeasures, data);
+        return sensorData;
     }
 
     private SensorData createSensorData(Sensor sensor, double value, MeasureType measureType) {

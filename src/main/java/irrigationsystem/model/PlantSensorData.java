@@ -1,18 +1,28 @@
-package irrigationsystem.dto;
+package irrigationsystem.model;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
-public interface MeasureValuesDto {
+public interface PlantSensorData {
     Long getPlantId();
+
     Integer getPlantTypeId();
+
     String getPlantTypeName();
+
     LocalDate getPlantingDate();
-    Integer getRelayNumber();
+
+    Integer getAreaNumber();
+
     Long getSensorId();
+
     String getMeasureType();
+
     Integer getMeasureTypeId();
+
     Double getValue();
+
     OffsetDateTime getCreationDate();
-    Integer getDeviceId();
+
+    Integer getControllerId();
 }

@@ -1,6 +1,6 @@
 package irrigationsystem.repository;
 
-import irrigationsystem.model.MeasureType;
+import irrigationsystem.entity.MeasureType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

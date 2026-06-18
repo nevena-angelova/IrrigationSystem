@@ -1,4 +1,8 @@
 export interface CreatePlant {
-    plantTypeId: number;
-    plantingDate: Date;
+  plantTypeId: number;
+  plantingDate: Date;
+  controllerId: number;
+  distanceX: number;
+  distanceY: number;
+  emitterFlow: number;
 }

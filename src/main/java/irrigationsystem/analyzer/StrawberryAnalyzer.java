@@ -1,69 +1,87 @@
 package irrigationsystem.analyzer;
 
 import irrigationsystem.dto.ReportDto;
-import irrigationsystem.model.GrowthPhase;
-import irrigationsystem.model.MeasureTypeEnum;
-
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
+import irrigationsystem.entity.GrowthPhase;
+import irrigationsystem.model.SensorValues;
 
 public class StrawberryAnalyzer extends Analyzer {
-    public StrawberryAnalyzer(Long plantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues) {
-        super(plantId, growthPhase, measureValues);
+
+    private static final double CRITICAL_SOIL_MOISTURE = 40;
+
+    private static final double MIN_TEMPERATURE = 5;
+    private static final double MAX_TEMPERATURE = 30;
+
+    private static final double HIGH_HUMIDITY = 85;
+    private static final double VERY_HIGH_HUMIDITY = 90;
+
+    private static final double LOW_HUMIDITY = 40;
+
+    public StrawberryAnalyzer(
+        Long plantId,
+        SensorValues sensorValues,
+        GrowthPhase growthPhase
+    ) {
+        super(plantId, sensorValues, growthPhase);
     }
 
     @Override
     public ReportDto analyze() {
 
-        if (getSoilMoisture() < getMinSoilMoisture()) {
-            setReportNeedsIrrigation(true);
-        }
+        analyzeCommonRules();
 
-        if (getSoilMoisture() > getMaxSoilMoisture()) {
-            addReportWarning("warning.strawberry.soil.too.wet");
-        }
+        double soil = sensorValues.getSoilMoisture();
+        double temperature = sensorValues.getTemperature();
+        double humidity = sensorValues.getHumidity();
 
-        if (getSoilMoisture() < 40) {
+        if (soil < CRITICAL_SOIL_MOISTURE) {
             addReportWarning("warning.strawberry.soil.critical.low");
         }
 
-        if (getTemperature() < 5.0) {
+        if (temperature < MIN_TEMPERATURE) {
             addReportWarning("warning.strawberry.temp.low");
-        } else if (getTemperature() > 30.0) {
+        } else if (temperature > MAX_TEMPERATURE) {
             addReportWarning("warning.strawberry.temp.high");
         }
 
-        if (getHumidity() > 85 && getTemperature() >= 15 && getTemperature() <= 25) {
+        if (humidity > HIGH_HUMIDITY && temperature >= 15 && temperature <= 25) {
             addReportWarning("warning.strawberry.botrytis");
         }
 
-        if (getHumidity() > 80 && getTemperature() > 25) {
+        if (humidity > 80 && temperature > 25) {
             addReportWarning("warning.strawberry.powdery.mildew");
         }
 
-        if (getHumidity() < 40 && getTemperature() > 28) {
+        if (humidity < LOW_HUMIDITY && temperature > 28) {
             addReportWarning("warning.strawberry.hot.dry");
         }
 
-        if (getTemperature() < 12 && getHumidity() > 90 && getSoilMoisture() > 80) {
+        if (temperature < 12 && humidity > VERY_HIGH_HUMIDITY && soil > 80) {
             addReportWarning("warning.strawberry.root.rot");
         }
 
-        if (getSoilMoisture() > 80 && getHumidity() > 90) {
+        if (soil > 80 && humidity > VERY_HIGH_HUMIDITY) {
             addReportWarning("warning.strawberry.fruit.mold");
         }
 
-        if (getSoilMoisture() < 50 && getHumidity() < 40 && getTemperature() > 30) {
+        if (soil < 50 && humidity < LOW_HUMIDITY && temperature > 30) {
             addReportWarning("warning.strawberry.heat.stress");
         }
 
-        if (getLight() < 20000) {
-            addReportWarning("warning.strawberry.low.light");
-        } else if (getLight() > 80000) {
-            addReportWarning("warning.strawberry.high.light");
-        }
+        return report;
+    }
 
-        return getReport();
+    @Override
+    protected String getSoilTooWetWarning() {
+        return "warning.strawberry.soil.too.wet";
+    }
+
+    @Override
+    protected String getHighLightWarning() {
+        return "warning.strawberry.high.light";
+    }
+
+    @Override
+    protected double getHighLightThreshold() {
+        return 80000;
     }
 }

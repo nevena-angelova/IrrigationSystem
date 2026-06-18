@@ -14,4 +14,10 @@ public class UserDto {
     private String firstName;
 
     private String lastName;
+
+    private int controllerNumber;
+
+    private double latitude;
+
+    private double altitude;
 }

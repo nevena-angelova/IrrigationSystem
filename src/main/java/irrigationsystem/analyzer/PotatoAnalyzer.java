@@ -1,67 +1,69 @@
 package irrigationsystem.analyzer;
 
 import irrigationsystem.dto.ReportDto;
-import irrigationsystem.model.GrowthPhase;
-import irrigationsystem.model.MeasureTypeEnum;
-
-import java.util.Map;
+import irrigationsystem.entity.GrowthPhase;
+import irrigationsystem.model.SensorValues;
 
 public class PotatoAnalyzer extends Analyzer {
-    public PotatoAnalyzer(Long plantId, GrowthPhase growthPhase, Map<MeasureTypeEnum, Double> measureValues) {
-        super(plantId, growthPhase, measureValues);
+
+    private static final double CRITICAL_SOIL_MOISTURE = 35;
+    private static final double MIN_TEMPERATURE = 7;
+    private static final double MAX_TEMPERATURE = 30;
+
+    public PotatoAnalyzer(Long plantId, SensorValues sensorValues, GrowthPhase growthPhase
+    ) {
+        super(plantId, sensorValues, growthPhase);
     }
 
     @Override
     public ReportDto analyze() {
 
-        if (getSoilMoisture() < getMinSoilMoisture()) {
-            setReportNeedsIrrigation(true);
-        }
+        analyzeCommonRules();
 
-        if (getSoilMoisture() > getMaxSoilMoisture()) {
-            addReportWarning("warning.potato.soil.too.wet");
-        }
+        double soil = sensorValues.getSoilMoisture();
+        double temperature = sensorValues.getTemperature();
+        double humidity = sensorValues.getHumidity();
 
-        if (getSoilMoisture() < 35) {
+        if (soil < CRITICAL_SOIL_MOISTURE) {
             addReportWarning("warning.potato.soil.critical.low");
         }
 
-        if (getTemperature() < 7.0) {
+        if (temperature < MIN_TEMPERATURE) {
             addReportWarning("warning.potato.temp.low");
-        } else if (getTemperature() > 30.0) {
+        } else if (temperature > MAX_TEMPERATURE) {
             addReportWarning("warning.potato.temp.high");
         }
 
-        if (getTemperature() >= 15 && getTemperature() <= 25 &&
-            getHumidity() > 85 && getSoilMoisture() > 75) {
-
+        if (temperature >= 15 && temperature <= 25 && humidity > 85 && soil > 75) {
             addReportWarning("warning.potato.mildew");
         }
 
-        if (getTemperature() > 25 && getHumidity() > 80) {
+        if (temperature > 25 && humidity > 80) {
             addReportWarning("warning.potato.alternaria");
         }
 
-        if (getTemperature() >= 10 && getTemperature() <= 20 &&
-            getSoilMoisture() > 85) {
-
+        if (temperature >= 10 && temperature <= 20 && soil > 85) {
             addReportWarning("warning.potato.gray.mold");
         }
 
-        if (getHumidity() < 40 && getTemperature() > 28 && getSoilMoisture() < 50) {
+        if (humidity < 40 && temperature > 28 && soil < 50) {
             addReportWarning("warning.potato.heat.dry");
         }
 
-        if (getHumidity() > 90 && getTemperature() < 15) {
+        if (humidity > 90 && temperature < 15) {
             addReportWarning("warning.potato.bacterial.rot");
         }
 
-        if (getLight() < 15000) {
-            addReportWarning("warning.potato.low.light");
-        } else if (getLight() > 90000) {
-            addReportWarning("warning.potato.high.light");
-        }
+        return report;
+    }
 
-        return getReport();
+    @Override
+    protected String getSoilTooWetWarning() {
+        return "warning.potato.soil.too.wet";
+    }
+
+    @Override
+    protected String getHighLightWarning() {
+        return "warning.potato.high.light";
     }
 }

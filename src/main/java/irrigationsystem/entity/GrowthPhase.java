@@ -1,4 +1,4 @@
-package irrigationsystem.model;
+package irrigationsystem.entity;
 
 import jakarta.persistence.*;
 import jakarta.persistence.Column;
@@ -42,14 +42,14 @@ public class GrowthPhase {
     private PlantType plantType;
 
     @Getter
-    @Column(name="irrigation_duration", nullable = false)
-    private int irrigationDuration;
+    @Column(name="crop_coefficient", nullable = false)
+    private double cropCoefficient;
 
 
     public GrowthPhase() {
     }
 
-    public GrowthPhase(int startDay, int endDay, String name, String details, double minSoilMoisture, double maxSoilMoisture, PlantType plantType, int irrigationDuration) {
+    public GrowthPhase(int startDay, int endDay, String name, String details, double minSoilMoisture, double maxSoilMoisture, PlantType plantType, double cropCoefficient) {
         this.name = name;
         this.details = details;
         this.minSoilMoisture = minSoilMoisture;
@@ -57,7 +57,7 @@ public class GrowthPhase {
         this.startDay = startDay;
         this.endDay = endDay;
         this.plantType = plantType;
-        this.irrigationDuration = irrigationDuration;
+        this.cropCoefficient = cropCoefficient;
     }
 
   public Integer getPlantTypeId() {

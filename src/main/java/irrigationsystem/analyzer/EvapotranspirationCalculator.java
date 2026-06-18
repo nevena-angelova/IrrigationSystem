@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class EvapotranspirationCalculator {
 
     private static final double ALPHA = 0.23;
-    private static final double G_SC = 0.0820; /* [MJ m⁻² min⁻¹] */
+    private static final double G_SC = 0.0820; /* [MJ/m/min] */
     private static final double SIGMA = 4.903e-9;
     private static final double K_RS = 0.16;
     private static final double GAMMA = 0.063;
@@ -206,19 +206,4 @@ public class EvapotranspirationCalculator {
             * dr
             * (ws * Math.sin(latRad) * Math.sin(delta) + Math.cos(latRad) * Math.cos(delta) * Math.sin(ws));
     }
-
-/*    // Пример за тест
-    public static void main(String[] args) {
-
-        double etC = calculateETc(
-            12, 25, 18,
-            60, 85,
-            42.7,     // София
-            550,      // надморска височина
-            LocalDate.now().getDayOfYear(),
-            0.85      // Kc за култура
-        );
-
-        System.out.println("ETc (mm/day): " + etC);
-    }*/
 }

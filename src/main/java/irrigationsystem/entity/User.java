@@ -1,4 +1,4 @@
-package irrigationsystem.model;
+package irrigationsystem.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Device> devices = new ArrayList<>();
+    private List<Controller> controllers = new ArrayList<>();
 
     @Override
     public String getUsername() {
@@ -71,7 +71,12 @@ public class User implements UserDetails {
         return List.of(new SimpleGrantedAuthority(role.getName()));
     }
 
-    public List<Device> getDevices() {
-        return devices;
+    public List<Controller> getControllers() {
+        return controllers;
+    }
+
+    public void addController(Controller controller) {
+        controllers.add(controller);
+        controller.setUser(this);
     }
 }

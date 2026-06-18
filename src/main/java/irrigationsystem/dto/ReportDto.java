@@ -1,6 +1,6 @@
 package irrigationsystem.dto;
 
-import irrigationsystem.model.GrowthPhase;
+import irrigationsystem.entity.GrowthPhase;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,7 +39,7 @@ public class ReportDto {
 
     @Setter
     @Getter
-    private int irrigationDuration;
+    private double cropCoefficient;
 
     @Getter
     private final List<String> warnings;
@@ -52,7 +52,7 @@ public class ReportDto {
         this.maxSoilMoisture = growthPhase.getMaxSoilMoisture();
         this.growthPhaseName = growthPhase.getName();
         this.growthPhaseDetails = growthPhase.getDetails();
-        this.irrigationDuration = growthPhase.getIrrigationDuration();
+        this.cropCoefficient = growthPhase.getCropCoefficient();
     }
 
     public void addWarning(String warning) {

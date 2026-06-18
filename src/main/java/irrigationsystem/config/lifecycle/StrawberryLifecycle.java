@@ -1,7 +1,7 @@
 package irrigationsystem.config.lifecycle;
 
-import irrigationsystem.model.GrowthPhase;
-import irrigationsystem.model.PlantType;
+import irrigationsystem.entity.GrowthPhase;
+import irrigationsystem.entity.PlantType;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class StrawberryLifecycle extends Lifecycle {
                 70.0,
                 85.0,
                 plantType,
-                4
+                0.40
             ),
             new GrowthPhase(
                 20,
@@ -32,7 +32,7 @@ public class StrawberryLifecycle extends Lifecycle {
                 65.0,
                 80.0,
                 plantType,
-                6
+                0.63
             ),
             new GrowthPhase(
                 50,
@@ -42,7 +42,7 @@ public class StrawberryLifecycle extends Lifecycle {
                 60.0,
                 75.0,
                 plantType,
-                8
+                0.85
             ),
             new GrowthPhase(
                 110,
@@ -52,7 +52,7 @@ public class StrawberryLifecycle extends Lifecycle {
                 55.0,
                 65.0,
                 plantType,
-                4
+                0.75
             ),
             new GrowthPhase(
                 140,
@@ -62,7 +62,7 @@ public class StrawberryLifecycle extends Lifecycle {
                 60.0,
                 60.0,
                 plantType,
-                3
+                0.75
             )
         );
     }

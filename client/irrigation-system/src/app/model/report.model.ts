@@ -2,7 +2,6 @@ export class Report {
     constructor(
         public plantId: number = 0,
         public needsIrrigation: boolean = false,
-        public hasWater: boolean = false,
         public warnings: string[] = [],
         public soilMoisture: number = 0,
         public maxSoilMoisture: number = 0,

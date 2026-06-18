@@ -1,17 +1,13 @@
 package irrigationsystem.service;
 
-import irrigationsystem.analyzer.Analyzer;
-import irrigationsystem.analyzer.AnalyzerFactory;
-import irrigationsystem.cache.CacheService;
-import irrigationsystem.dto.MeasureValuesDto;
-import irrigationsystem.dto.PlantReportDto;
-import irrigationsystem.dto.ReportDto;
-import irrigationsystem.model.GrowthPhase;
-import irrigationsystem.model.MeasureTypeEnum;
-import irrigationsystem.model.PlantType;
+import irrigationsystem.entity.MeasureTypeEnum;
+import irrigationsystem.model.*;
 import irrigationsystem.repository.SensorDataRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,59 +16,64 @@ import java.util.stream.Collectors;
 public class SensorDataService {
 
     private final SensorDataRepository sensorDataRepository;
-    private final CacheService cacheService;
 
-    public SensorDataService(SensorDataRepository sensorDataRepository, CacheService cacheService) {
+    public SensorDataService(SensorDataRepository sensorDataRepository) {
         this.sensorDataRepository = sensorDataRepository;
-        this.cacheService = cacheService;
     }
 
-    public List<PlantReportDto> getPlantReport(Long userId) {
-        List<MeasureValuesDto> measures = sensorDataRepository.getLatestValuesByUserId(userId);
-
-        return createPlantReport(measures);
+    public List<PlantSensorData> getLatestPlantSoilMoistureSensorData(Long userId) {
+        List<PlantSensorData> plantSensorData = sensorDataRepository.getLatestValuesByUserId(userId);
+        return plantSensorData;
     }
 
-    public List<PlantReportDto> getAllPlantReports() {
-        List<MeasureValuesDto> measures = sensorDataRepository.getLatestValuesAllUsers();
+    public Map<Integer, ControllerMetrics> getControllerMetrics(LocalDateTime from) {
 
-        return createPlantReport(measures);
+        List<ControllerSensorData> controllerSensorData = sensorDataRepository.getDataFrom(from, MeasureTypeEnum.SoilMoisture.getValue());
+
+        if (controllerSensorData == null || controllerSensorData.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<Integer, ControllerMetrics> result =
+            controllerSensorData.stream()
+                .collect(Collectors.groupingBy(
+                    ControllerSensorData::getControllerId,
+                    Collectors.collectingAndThen(Collectors.toList(), list -> {
+
+                        DoubleSummaryStatistics tStats = list.stream()
+                            .filter(m -> MeasureTypeEnum.Temperature.name().equals(m.getMeasureType()))
+                            .mapToDouble(ControllerSensorData::getValue)
+                            .summaryStatistics();
+
+                        DoubleSummaryStatistics rhStats = list.stream()
+                            .filter(m -> MeasureTypeEnum.Humidity.name().equals(m.getMeasureType()))
+                            .mapToDouble(ControllerSensorData::getValue)
+                            .summaryStatistics();
+
+                        ControllerSensorData first = list.get(0);
+
+                        return new ControllerMetrics(
+                            first.getControllerId(),
+                            first.getAltitude(),
+                            first.getLatitude(),
+                            new Metrics(
+                                tStats.getCount() > 0 ? tStats.getMin() : 0,
+                                tStats.getCount() > 0 ? tStats.getMax() : 0,
+                                tStats.getCount() > 0 ? tStats.getAverage() : 0,
+                                rhStats.getCount() > 0 ? rhStats.getMin() : 0,
+                                rhStats.getCount() > 0 ? rhStats.getMax() : 0
+                            )
+                        );
+                    })
+                ));
+
+        return result;
     }
 
-    /*
-    Group measures by Plant ID, then for each group create a PlantReportDto with the latest measure values and an analysis report.
-    */
-    public List<PlantReportDto> createPlantReport(List<MeasureValuesDto> measures) {
-        return measures.stream()
-            .collect(Collectors.groupingBy(MeasureValuesDto::getPlantId))
-            .values()
-            .stream()
-            .map(this::analyzePlantData)
-            .toList();
-    }
+    public List<PlantSoilMoistureData> getLatestPlantSoilMoistureSensorData() {
 
-    private PlantReportDto analyzePlantData(List<MeasureValuesDto> group) {
+        List<PlantSoilMoistureData> data = sensorDataRepository.getPlantSensorData(MeasureTypeEnum.SoilMoisture.getValue());
 
-        MeasureValuesDto value = group.getFirst();
-
-        GrowthPhase growthPhase = cacheService.getGrowthPhase(value.getPlantingDate(), value.getPlantTypeId());
-        PlantType plantType = cacheService.getPlantType(value.getPlantTypeId());
-
-        Map<MeasureTypeEnum, Double> measureValues =
-            group.stream().collect(Collectors.toMap(
-                v -> MeasureTypeEnum.valueOf(v.getMeasureType()),
-                MeasureValuesDto::getValue
-            ));
-
-        Analyzer analyzer = AnalyzerFactory.createAnalyzer(
-            value.getPlantId(),
-            plantType,
-            growthPhase,
-            measureValues
-        );
-
-        ReportDto report = analyzer.analyze();
-
-        return new PlantReportDto(value, report);
+        return data == null ? Collections.emptyList() : data;
     }
 }

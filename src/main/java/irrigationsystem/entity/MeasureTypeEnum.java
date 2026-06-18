@@ -1,4 +1,4 @@
-package irrigationsystem.model;
+package irrigationsystem.entity;
 
 import lombok.Getter;
 

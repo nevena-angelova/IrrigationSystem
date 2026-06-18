@@ -1,7 +1,7 @@
 package irrigationsystem.config.lifecycle;
 
-import irrigationsystem.model.GrowthPhase;
-import irrigationsystem.model.PlantType;
+import irrigationsystem.entity.GrowthPhase;
+import irrigationsystem.entity.PlantType;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class TomatoLifecycle extends Lifecycle {
                 65.0,
                 80.0,
                 plantType,
-                4
+                0.60
             ),
             new GrowthPhase(
                 30,
@@ -32,7 +32,7 @@ public class TomatoLifecycle extends Lifecycle {
                 60.0,
                 75.0,
                 plantType,
-                6
+                0.88
             ),
             new GrowthPhase(
                 70,
@@ -42,7 +42,7 @@ public class TomatoLifecycle extends Lifecycle {
                 65.0,
                 75.0,
                 plantType,
-                8
+                1.15
             ),
             new GrowthPhase(
                 120,
@@ -52,7 +52,7 @@ public class TomatoLifecycle extends Lifecycle {
                 55.0,
                 65.0,
                 plantType,
-                5
+                0.80
             ),
             new GrowthPhase(
                 150,
@@ -62,7 +62,7 @@ public class TomatoLifecycle extends Lifecycle {
                 60.0,
                 60.0,
                 plantType,
-                3
+                0.80
             )
         );
     }

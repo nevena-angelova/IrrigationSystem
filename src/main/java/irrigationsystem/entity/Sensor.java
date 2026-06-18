@@ -1,10 +1,13 @@
-package irrigationsystem.model;
+package irrigationsystem.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Entity
@@ -21,12 +24,11 @@ public class Sensor {
     private SensorType sensorType;
 
     @ManyToOne
-    @JoinColumn(name = "device_id")
+    @JoinColumn(name = "controller_id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    private Device device;
+    private Controller controller;
 
     @Getter
-    @ManyToOne
-    @JoinColumn(name = "plant_id")
-    private Plant plant;
+    @ManyToMany(mappedBy = "sensors")
+    private List<Plant> plants = new ArrayList<>();
 }

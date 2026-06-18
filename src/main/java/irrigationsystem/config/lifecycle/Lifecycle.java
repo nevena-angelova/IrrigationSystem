@@ -1,7 +1,7 @@
 package irrigationsystem.config.lifecycle;
 
-import irrigationsystem.model.GrowthPhase;
-import irrigationsystem.model.PlantType;
+import irrigationsystem.entity.GrowthPhase;
+import irrigationsystem.entity.PlantType;
 import lombok.Getter;
 
 import java.util.List;

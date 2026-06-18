@@ -1,7 +1,7 @@
 package irrigationsystem.config;
 
 import irrigationsystem.config.lifecycle.PotatoLifecycle;
-import irrigationsystem.model.*;
+import irrigationsystem.entity.*;
 import irrigationsystem.repository.*;
 import irrigationsystem.config.lifecycle.CarrotLifecycle;
 import irrigationsystem.config.lifecycle.StrawberryLifecycle;
@@ -26,7 +26,7 @@ public class SeedDataConfig implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final MeasureTypeRepository measureTypeRepository;
     private final SensorTypeRepository sensorTypeRepository;
-    private final DeviceRepository deviceRepository;
+    private final ControllerRepository controllerRepository;
     private final SensorRepository sensorRepository;
     private final GrowthPhaseRepository growthPhaseRepository;
 
@@ -40,27 +40,31 @@ public class SeedDataConfig implements CommandLineRunner {
     private void seedMeasureAndSensorTypes() {
         if (measureTypeRepository.count() > 0 || sensorTypeRepository.count() > 0) return;
 
-        MeasureType temperature = createMeasure("Temperature", "°C");
-        MeasureType humidity = createMeasure("Humidity", "%");
-        MeasureType light = createMeasure("Light", "lx");
-        MeasureType soilMoisture = createMeasure("SoilMoisture", "%");
+        MeasureType temperature = createMeasure(MeasureTypeEnum.Temperature.name(), "°C");
+        MeasureType humidity = createMeasure(MeasureTypeEnum.Humidity.name(), "%");
+        MeasureType light = createMeasure(MeasureTypeEnum.Light.name(), "lx");
+        MeasureType soilMoisture = createMeasure(MeasureTypeEnum.SoilMoisture.name(), "%");
 
-        SensorType dht22 = createSensorType("DHT22", List.of(temperature, humidity));
-        SensorType bh1750 = createSensorType("BH1750", List.of(light));
-        SensorType capacitiveSoilMoisture = createSensorType("Capacitive Soil Moisture v1.2", List.of(soilMoisture));
+        SensorType dht22 = createSensorType(SensorTypeEnum.DHT22.getValue(), List.of(temperature, humidity));
+        SensorType bh1750 = createSensorType(SensorTypeEnum.BH1750.getValue(), List.of(light));
+        SensorType capacitiveSoilMoisture = createSensorType(SensorTypeEnum.SOIL_MOISTURE.getValue(), List.of(soilMoisture));
 
         sensorTypeRepository.saveAll(List.of(dht22, bh1750, capacitiveSoilMoisture));
     }
 
     private void seedAdminUserWithDeviceAndSensors() {
-        if (roleRepository.count() > 0 || userRepository.count() > 0 || deviceRepository.count() > 0 || sensorRepository.count() > 0)
+        if (roleRepository.count() > 0 || userRepository.count() > 0 || controllerRepository.count() > 0 || sensorRepository.count() > 0)
             return;
+
+        Role userRole = Role.builder()
+            .name(RoleEnum.ADMIN.name())
+            .build();
 
         Role adminRole = Role.builder()
                 .name(RoleEnum.ADMIN.name())
                 .build();
 
-        roleRepository.save(adminRole);
+        roleRepository.saveAll(List.of(userRole, adminRole));
 
         User admin = new User();
         admin.setUsername("admin");
@@ -79,30 +83,32 @@ public class SeedDataConfig implements CommandLineRunner {
         admin = userRepository.save(admin);
 
         /*
-         Create device for admin user
+         Add controller for admin user
          */
 
-        Device device = new Device();
-        device.setName("ESP32-Admin");
-        device.setUser(admin);
+        Controller controller = new Controller();
+        controller.setNumber(1);
+        controller.setLatitude(42.697778); // Sofia
+        controller.setAltitude(550);
+        controller.setUser(admin);
 
-        device = deviceRepository.save(device);
+        controller = controllerRepository.save(controller);
 
-        admin.getDevices().add(device);
+        admin.getControllers().add(controller);
 
         userRepository.save(admin);
 
         /*
-         Add sensors to a device
+         Add default sensors to a controller
          */
 
-        List<SensorType> sensorTypes = sensorTypeRepository.findAll();
+        List<SensorType> defaultSensorTypes = sensorTypeRepository.findByNameIn(List.of(SensorTypeEnum.DHT22.getValue(), SensorTypeEnum.BH1750.getValue()));
         List<Sensor> sensors = new ArrayList<>();
 
-        for (var sensorType : sensorTypes) {
+        for (var sensorType : defaultSensorTypes) {
             Sensor sensor = new Sensor();
             sensor.setSensorType(sensorType);
-            sensor.setDevice(device);
+            sensor.setController(controller);
             sensors.add(sensor);
         }
 

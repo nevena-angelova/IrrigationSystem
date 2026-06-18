@@ -1,8 +1,8 @@
 package irrigationsystem.cache;
 
 
-import irrigationsystem.model.GrowthPhase;
-import irrigationsystem.model.PlantType;
+import irrigationsystem.entity.GrowthPhase;
+import irrigationsystem.entity.PlantType;
 import irrigationsystem.repository.GrowthPhaseRepository;
 import irrigationsystem.repository.PlantTypeRepository;
 import lombok.RequiredArgsConstructor;

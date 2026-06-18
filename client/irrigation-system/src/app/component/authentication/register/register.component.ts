@@ -23,6 +23,9 @@ export class RegisterComponent {
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
+      controllerNumber: ['', Validators.required],
+      latitude: ['', Validators.required],
+      altitude: ['', Validators.required]
     });
   }
 

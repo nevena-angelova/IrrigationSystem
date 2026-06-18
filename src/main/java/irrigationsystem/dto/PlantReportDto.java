@@ -1,5 +1,6 @@
 package irrigationsystem.dto;
 
+import irrigationsystem.model.PlantSensorData;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,17 +21,17 @@ public class PlantReportDto {
     private ReportDto report;
 
     @Setter
-    private Integer deviceId;
+    private Integer controllerId;
 
     @Setter
     private Integer relayNumber;
 
-    public PlantReportDto(MeasureValuesDto measureValuesDto, ReportDto report) {
-        this.id = measureValuesDto.getPlantId();
-        this.plantType = new PlantTypeDto(measureValuesDto.getPlantTypeId(), measureValuesDto.getPlantTypeName());
-        this.plantingDate = measureValuesDto.getPlantingDate();
-        this.deviceId = measureValuesDto.getDeviceId();
-        this.relayNumber = measureValuesDto.getRelayNumber();
+    public PlantReportDto(PlantSensorData plantSensorDataDto, ReportDto report) {
+        this.id = plantSensorDataDto.getPlantId();
+        this.plantType = new PlantTypeDto(plantSensorDataDto.getPlantTypeId(), plantSensorDataDto.getPlantTypeName());
+        this.plantingDate = plantSensorDataDto.getPlantingDate();
+        this.controllerId = plantSensorDataDto.getControllerId();
+        this.relayNumber = plantSensorDataDto.getAreaNumber();
         this.report = report;
     }
 }

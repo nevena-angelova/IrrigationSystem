@@ -30,6 +30,12 @@ export class PlantComponent implements OnInit {
   reportSubscription: Subscription | undefined;
   report: Report = new Report();
 
+  controllerId: number = 1;
+  distanceX: number = 0;
+  distanceY: number = 0;
+  emitterFlow: number = 0;
+
+
   constructor(private plantService: PlantService, private cdRef: ChangeDetectorRef, private webSocketService: WebSocketService) {
   }
 
@@ -75,6 +81,10 @@ export class PlantComponent implements OnInit {
     const plant: CreatePlant = {
       plantTypeId: this.selectedPlantType,
       plantingDate: this.selectedDate,
+      controllerId: this.controllerId,
+      distanceX: this.distanceX,
+      distanceY: this.distanceY,
+      emitterFlow: this.emitterFlow
     };
 
     this.plantService.createPlant(plant).subscribe({
@@ -85,10 +95,6 @@ export class PlantComponent implements OnInit {
 
   needsIrrigation(plant: Plant) {
     return plant.report?.needsIrrigation;
-  }
-
-  hasWater(plant: Plant){
-    return plant.report?.hasWater
   }
 
   hasWarnings(plant: Plant) {

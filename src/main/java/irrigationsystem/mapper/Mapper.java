@@ -4,13 +4,11 @@ import java.util.List;
 
 import irrigationsystem.dto.UserDto;
 import irrigationsystem.dto.PlantTypeDto;
-import irrigationsystem.model.PlantType;
-import irrigationsystem.model.User;
+import irrigationsystem.entity.PlantType;
+import irrigationsystem.entity.User;
 
 @org.mapstruct.Mapper(componentModel = "spring")
 public interface Mapper {
-
-    User fromUserDto(UserDto userDto);
 
     PlantTypeDto toPlantTypeDto(PlantType PlantType);
     List<PlantTypeDto> toPlantTypeDtoList(List<PlantType> PlantTypes);

@@ -1,7 +1,7 @@
 package irrigationsystem.config.lifecycle;
 
-import irrigationsystem.model.GrowthPhase;
-import irrigationsystem.model.PlantType;
+import irrigationsystem.entity.GrowthPhase;
+import irrigationsystem.entity.PlantType;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class PotatoLifecycle extends Lifecycle {
                 70.0,
                 85.0,
                 plantType,
-                5
+                0.50
             ),
             new GrowthPhase(
                 25,
@@ -32,7 +32,7 @@ public class PotatoLifecycle extends Lifecycle {
                 65.0,
                 80.0,
                 plantType,
-                7
+                0.83
             ),
             new GrowthPhase(
                 55,
@@ -42,7 +42,7 @@ public class PotatoLifecycle extends Lifecycle {
                 75.0,
                 85.0,
                 plantType,
-                8
+                1.15
             ),
             new GrowthPhase(
                 100,
@@ -52,7 +52,7 @@ public class PotatoLifecycle extends Lifecycle {
                 65.0,
                 75.0,
                 plantType,
-                5
+                0.75
             ),
             new GrowthPhase(
                 130,
@@ -62,7 +62,7 @@ public class PotatoLifecycle extends Lifecycle {
                 60.0,
                 60.0,
                 plantType,
-                3
+                0.75
             )
         );
     }

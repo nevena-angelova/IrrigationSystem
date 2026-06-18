@@ -1,38 +1,22 @@
 package irrigationsystem;
 
-import irrigationsystem.model.SensorData;
-import irrigationsystem.service.MqttService;
-import irrigationsystem.service.SensorDataService;
+import irrigationsystem.service.IrrigationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
+@Component
+@RequiredArgsConstructor
 public class IrrigationScheduler {
 
-    private final SensorDataService sensorDataService;
-    private final MqttService mqttService;
+    private final IrrigationService irrigationService;
 
-    public IrrigationScheduler(SensorDataService sensorDataService,
-                               MqttService mqttService) {
-        this.sensorDataService = sensorDataService;
-        this.mqttService = mqttService;
-    }
-
-/*    // Every day at 08:00
-    @Scheduled(cron = "0 0 8 * * *")
+    /**
+     * The method is scheduled to run daily at 8:00 AM as defined by the cron expression.
+     */
+   // @Scheduled(cron = "0 0 5 * * *", zone = "UTC")
+    @Scheduled(fixedRate = 15 * 60 * 1000)
     public void checkAndWaterPlants() {
-
-        // Взимаш последните данни от БД
-        SensorData latest = sensorDataService.getLatestData();
-
-        if (latest == null) return;
-
-        double soilMoisture = latest.getSoilMoisture();
-        double temperature = latest.getTemperature();
-        double light = latest.getLight();
-
-        // Примерни условия
-        if (soilMoisture < 30 && temperature > 20) {
-            // Пускаш помпата през MQTT
-            mqttService.publish("pump/control", "ON");
-        }
-    }*/
+        irrigationService.processDailyIrrigation();
+    }
 }

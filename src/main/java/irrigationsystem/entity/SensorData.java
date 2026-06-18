@@ -1,4 +1,4 @@
-package irrigationsystem.model;
+package irrigationsystem.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,6 +20,8 @@ public class SensorData {
     @Column(nullable = false)
     private Double value;
 
+    @Setter
+    @Getter
     @Column(name = "creation_date", nullable = false)
     OffsetDateTime creationDate;
 

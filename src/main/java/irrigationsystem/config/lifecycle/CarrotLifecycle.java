@@ -1,7 +1,7 @@
 package irrigationsystem.config.lifecycle;
 
-import irrigationsystem.model.GrowthPhase;
-import irrigationsystem.model.PlantType;
+import irrigationsystem.entity.GrowthPhase;
+import irrigationsystem.entity.PlantType;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class CarrotLifecycle extends Lifecycle {
                 70.0,
                 85.0,
                 plantType,
-                5
+                0.70
             ),
             new GrowthPhase(
                 30,
@@ -32,7 +32,7 @@ public class CarrotLifecycle extends Lifecycle {
                 65.0,
                 80.0,
                 plantType,
-                6
+                0.88
             ),
             new GrowthPhase(
                 70,
@@ -42,7 +42,7 @@ public class CarrotLifecycle extends Lifecycle {
                 65.0,
                 75.0,
                 plantType,
-                7
+                1.05
             ),
             new GrowthPhase(
                 130,
@@ -52,7 +52,7 @@ public class CarrotLifecycle extends Lifecycle {
                 60.0,
                 70.0,
                 plantType,
-                4
+                0.95
             ),
             new GrowthPhase(
                 150,
@@ -62,7 +62,7 @@ public class CarrotLifecycle extends Lifecycle {
                 60.0,
                 60.0,
                 plantType,
-                2
+                0.95
             )
         );
     }

@@ -1,10 +1,10 @@
 package irrigationsystem.repository;
 
-import irrigationsystem.model.Device;
+import irrigationsystem.entity.Controller;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DeviceRepository extends JpaRepository<Device, Long> {
+public interface ControllerRepository extends JpaRepository<Controller, Long> {
     @EntityGraph(attributePaths = "sensors")
-    Device getDeviceByUserId(Long userId);
+    Controller getControllerByUserId(Long userId);
 }

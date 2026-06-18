@@ -10,17 +10,20 @@ import org.springframework.stereotype.Service;
 public class MqttService {
     private final MqttPublisher mqttPublisher;
 
-    public ResponseDto<String> turnRelayOn(long deviceId) {
-        String topic = "garden/" + deviceId + "/relay";
-        mqttPublisher.publish(topic, "ON");
+    public ResponseDto<String> turnRelayOn(long controllerId, int areaNumber, double duration) {
+        String topic = "garden/" + controllerId + "/relay/" + areaNumber;
 
-        return ResponseDto.<String>builder().value("Relay ON command sent to device " + deviceId).build();
+        String payload = "ON:" + duration;
+
+        mqttPublisher.publish(topic, payload);
+
+        return ResponseDto.<String>builder().value("Relay ON command sent to controller " + controllerId).build();
     }
 
-    public ResponseDto<String>  turnRelayOff(long deviceId) {
-        String topic = "garden/" + deviceId + "/relay";
+    public ResponseDto<String>  turnRelayOff(long controllerId) {
+        String topic = "garden/" + controllerId + "/relay";
         mqttPublisher.publish(topic, "OFF");
 
-        return ResponseDto.<String>builder().value("Relay OFF command sent to device " + deviceId).build();
+        return ResponseDto.<String>builder().value("Relay OFF command sent to controller " + controllerId).build();
     }
 }

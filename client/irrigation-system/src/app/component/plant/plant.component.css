@@ -18,8 +18,9 @@ button {
 }
 
 .form-card label{
-  min-width: 200px;
+  min-width: 400px;
 }
+
 
 /* Cards grid */
 .cards-container {

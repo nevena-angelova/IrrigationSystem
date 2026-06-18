@@ -1,18 +1,24 @@
 package irrigationsystem.service;
 
+import irrigationsystem.analyzer.Analyzer;
+import irrigationsystem.analyzer.AnalyzerFactory;
 import irrigationsystem.cache.CacheService;
 import irrigationsystem.dto.*;
 import irrigationsystem.mapper.Mapper;
-import irrigationsystem.model.*;
+import irrigationsystem.entity.*;
+import irrigationsystem.model.PlantSensorData;
+import irrigationsystem.model.SensorValues;
 import irrigationsystem.repository.*;
 import irrigationsystem.mqtt.MqttPublisher;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,10 +27,11 @@ public class PlantService {
     private final PlantRepository plantRepository;
     private final Mapper mapper;
     private final SensorTypeRepository sensorTypeRepository;
-    private final DeviceRepository deviceRepository;
+    private final ControllerRepository controllerRepository;
     private final MqttPublisher mqttPublisher;
     private final CacheService cacheService;
     private final SensorDataService sensorDataService;
+    private final SensorRepository sensorRepository;
 
     public ResponseDto<List<PlantTypeDto>> getPlantTypes() {
 
@@ -33,6 +40,7 @@ public class PlantService {
         return ResponseDto.<List<PlantTypeDto>>builder().value(plantTypes).build();
     }
 
+    @Transactional
     public ResponseDto<String> createPlant(CreatePlantDto createPlantDto) {
 
         var userId = getUserId();
@@ -41,20 +49,22 @@ public class PlantService {
             return ResponseDto.<String>builder().errorMessage(Optional.of("Invalid authentication.")).hasErrors(true).build();
         }
 
-        Device device = deviceRepository.getDeviceByUserId(userId.get());
+        Controller controller = controllerRepository.getControllerByUserId(userId.get());
 
         Plant plant = createNewPlant(createPlantDto);
 
-        plantRepository.save(plant);
+        attachSensors(plant, controller);
 
-        attachSensors(plant, device);
+        setAreaNumber(plant, controller.getId());
 
-       /*
-       Save again to update sensor references
-        */
         plantRepository.save(plant);
 
         return ResponseDto.<String>builder().value("Plant created successfully").build();
+    }
+
+    private void setAreaNumber(Plant plant, Integer controllerId) {
+        int plantCount = plantRepository.getPlantCount(controllerId);
+        plant.setAreaNumber(plantCount + 1);
     }
 
     public ResponseDto<List<PlantReportDto>> getUserPlantReports() {
@@ -64,42 +74,45 @@ public class PlantService {
             return ResponseDto.<List<PlantReportDto>>builder().errorMessage(Optional.of("Invalid authentication.")).hasErrors(true).build();
         }
 
-        List<PlantReportDto> plantReport = sensorDataService.getPlantReport(userId.get());
+        List<PlantReportDto> plantReport = getPlantReport(userId.get());
 
         return ResponseDto.<List<PlantReportDto>>builder().value(plantReport).build();
     }
 
-    public ResponseDto<String> irrigate(long deviceId, int relayId, int irrigationDuration) {
-        String topic = "garden/" + deviceId + "/relay/" + relayId;
+    public ResponseDto<String> irrigate(long controllerId, int relayId, int irrigationDuration) {
+        String topic = "garden/" + controllerId + "/relay/" + relayId;
         mqttPublisher.publish(topic, String.format("{\"relayId\":%d,\"irrigationDuration\":\"%d\"}", relayId, irrigationDuration));
 
-        return ResponseDto.<String>builder().value("Relay ON command sent to device " + deviceId).build();
+        return ResponseDto.<String>builder().value("Relay ON command sent to controller " + controllerId).build();
     }
 
     private Plant createNewPlant(CreatePlantDto createPlantDto) {
         Plant plant = new Plant();
         plant.setPlantTypeId(createPlantDto.getPlantTypeId());
         plant.setPlantingDate(createPlantDto.getPlantingDate());
-        plant.setRelayNumber(1);
-
+        plant.setDistanceX(createPlantDto.getDistanceX());
+        plant.setDistanceY(createPlantDto.getDistanceY());
+        plant.setEtc(0.0);
+        plant.setEmitterFlow(createPlantDto.getEmitterFlow());
         return plant;
     }
 
-    /*
-    Every plant has several sensors attached.
-    Each sensor has a type and each type can measure one or two parameters
-    */
-    private void attachSensors(Plant plant, Device device) {
+    /**
+     * Every plant has several sensors attached.
+     * Each sensor has a type and each type can measure one or two parameters
+     */
+    private void attachSensors(Plant plant, Controller controller) {
 
-        var sensorTypes = sensorTypeRepository.findAll();
+        List<Sensor> defaultSensors = sensorRepository.findBySensorTypeNameIn(List.of(SensorTypeEnum.DHT22.getValue(), SensorTypeEnum.BH1750.getValue()));
+        defaultSensors.forEach(plant::addSensor);
 
-        for (SensorType type : sensorTypes) {
-            Sensor sensor = new Sensor();
-            sensor.setSensorType(type);
-            sensor.setDevice(device);
-            sensor.setPlant(plant);
-            plant.getSensors().add(sensor);
-        }
+        SensorType soilMoistureType = sensorTypeRepository.findByNameIn(List.of(SensorTypeEnum.SOIL_MOISTURE.getValue())).getFirst();
+
+        Sensor soilMoistureSensor = new Sensor();
+        soilMoistureSensor.setSensorType(soilMoistureType);
+        soilMoistureSensor.setController(controller);
+
+        plant.addSensor(soilMoistureSensor);
     }
 
     private Optional<Long> getUserId() {
@@ -112,5 +125,50 @@ public class PlantService {
         long userId = ((User) authentication.getPrincipal()).getId();
 
         return Optional.of(userId);
+    }
+
+    private List<PlantReportDto> getPlantReport(Long userId) {
+        List<PlantSensorData> plantSensorData = sensorDataService.getLatestPlantSoilMoistureSensorData(userId);
+
+        /*
+        Group measures by PlantId, then for each group create a PlantReportDto with the latest measure values and an analysis report.
+        */
+        return plantSensorData.stream()
+            .collect(Collectors.groupingBy(PlantSensorData::getPlantId))
+            .values()
+            .stream()
+            .map(this::analyzePlantData)
+            .toList();
+    }
+
+    private PlantReportDto analyzePlantData(List<PlantSensorData> sensorData) {
+
+        PlantSensorData data = sensorData.getFirst();
+
+        SensorValues sensorValues = new SensorValues();
+
+        GrowthPhase growthPhase = cacheService.getGrowthPhase(data.getPlantingDate(), data.getPlantTypeId());
+
+        sensorData.forEach(v -> {
+            MeasureTypeEnum type = MeasureTypeEnum.valueOf(v.getMeasureType());
+
+            switch (type) {
+                case Temperature -> sensorValues.setTemperature(v.getValue());
+                case SoilMoisture -> sensorValues.setSoilMoisture(v.getValue());
+                case Humidity -> sensorValues.setHumidity(v.getValue());
+                case Light -> sensorValues.setLight(v.getValue());
+            }
+        });
+
+        Analyzer analyzer = AnalyzerFactory.createAnalyzer(
+            data.getPlantId(),
+            sensorValues,
+            data.getPlantTypeId(),
+            growthPhase
+        );
+
+        ReportDto report = analyzer.analyze();
+
+        return new PlantReportDto(data, report);
     }
 }

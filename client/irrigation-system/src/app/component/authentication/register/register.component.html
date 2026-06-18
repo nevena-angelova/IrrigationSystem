@@ -16,9 +16,21 @@
     <label for="email" class="form-label">Email</label>
     <input  formControlName="email"  type="email" class="form-control" id="email" required />
   </div>
-  <div class="mb-4">
+  <div class="mb-3">
     <label for="password" class="form-label">Парола</label>
     <input  formControlName="password" type="password" class="form-control" id="password" required minlength="6"/>
+  </div>
+  <div class="mb-3">
+    <label for="controllerNumber" class="form-label">Име на контролер</label>
+    <input  formControlName="controllerNumber"  type="text" class="form-control" id="controllerNumber" required />
+  </div>
+  <div class="mb-3">
+    <label for="latitude" class="form-label">Географска ширина</label>
+    <input  formControlName="latitude"  type="text" class="form-control" id="latitude" required />
+  </div>
+  <div class="mb-3">
+    <label for="altitude" class="form-label">Надморска височина</label>
+    <input  formControlName="altitude"  type="text" class="form-control" id="altitude" required />
   </div>
   <button type="submit" class="btn-submit">Регистрация</button>
   <p class="form-toggle"><a href="#" (click)="onToggleForm()">Вход</a></p>
