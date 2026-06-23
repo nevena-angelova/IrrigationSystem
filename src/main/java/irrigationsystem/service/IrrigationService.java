@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -49,7 +50,7 @@ public class IrrigationService {
 
     public void processDailyIrrigation() {
 
-        Map<Integer, ControllerMetrics> controllerMetrics = sensorDataService.getControllerMetrics(LocalDateTime.now().minusMinutes(15));
+        Map<Integer, ControllerMetrics> controllerMetrics = sensorDataService.getControllerMetrics(LocalDateTime.now(ZoneOffset.UTC).minusMinutes(1));
 
         if (controllerMetrics.isEmpty()) {
             return;
@@ -95,7 +96,14 @@ public class IrrigationService {
 
         double dailyEtc = IrrigationCalculator.calculateEvapotranspiration(metrics, growthPhase);
 
+
+        log.info("Plant {} Soil moisture: {}, Metrics: tMin {}, tMax {}, tMean {}, rhMin {}, rhMax {}", plant.getId(), data.getSoilMoisture(), metrics.getMetrics().getTMin(), metrics.getMetrics().getTMax(), metrics.getMetrics().getTMean(), metrics.getMetrics().getRhMin(), metrics.getMetrics().getRhMax());
+
+        log.info("Plant {} daily ETC: {}", plant.getId(), dailyEtc);
+
         double accumulatedEtc = plant.getEtc() + dailyEtc;
+
+        log.info("Plant {} accumulated ETC: {}", plant.getId(), accumulatedEtc);
 
         if (needsIrrigation(data, growthPhase)) {
 
@@ -122,7 +130,9 @@ public class IrrigationService {
                 plant.getEmitterFlow()
             );
 
-        mqttService.turnRelayOn(controllerId, plant.getAreaNumber(), duration);
+        log.info("Plant {} duration: {}", plant.getId(), duration);
+
+        mqttService.irrigate(controllerId, plant.getAreaNumber(), duration);
 
         log.info(
             "Irrigating plant {}, controller {} for {} seconds",
