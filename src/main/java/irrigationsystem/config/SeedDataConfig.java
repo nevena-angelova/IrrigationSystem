@@ -129,7 +129,7 @@ public class SeedDataConfig implements CommandLineRunner {
 
         growthPhases.addAll(new StrawberryLifecycle(strawberry).getPhases());
         growthPhases.addAll(new TomatoLifecycle(tomato).getPhases());
-        growthPhases.addAll(new PotatoLifecycle(potato).getPhases()); // ✅ FIXED
+        growthPhases.addAll(new PotatoLifecycle(potato).getPhases());
         growthPhases.addAll(new CarrotLifecycle(carrot).getPhases());
 
         growthPhaseRepository.saveAll(growthPhases);

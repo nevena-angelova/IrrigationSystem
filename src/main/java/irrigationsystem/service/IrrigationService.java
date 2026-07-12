@@ -50,7 +50,7 @@ public class IrrigationService {
 
     public void processDailyIrrigation() {
 
-        Map<Integer, ControllerMetrics> controllerMetrics = sensorDataService.getControllerMetrics(LocalDateTime.now(ZoneOffset.UTC).minusMinutes(1));
+        Map<Integer, ControllerMetrics> controllerMetrics = sensorDataService.getControllerMetrics(LocalDateTime.now(ZoneOffset.UTC).minusDays(1));
 
         if (controllerMetrics.isEmpty()) {
             return;
@@ -94,12 +94,12 @@ public class IrrigationService {
 
         GrowthPhase growthPhase = cacheService.getGrowthPhase(plant.getPlantingDate(), plant.getPlantTypeId());
 
-        double dailyEtc = IrrigationCalculator.calculateEvapotranspiration(metrics, growthPhase);
-
+        double dailyEtc = IrrigationCalculator.calculateEvapotranspiration(metrics, growthPhase, false);
+        double dailyEtcMeasuredRadiation = IrrigationCalculator.calculateEvapotranspiration(metrics, growthPhase, true);
 
         log.info("Plant {} Soil moisture: {}, Metrics: tMin {}, tMax {}, tMean {}, rhMin {}, rhMax {}", plant.getId(), data.getSoilMoisture(), metrics.getMetrics().getTMin(), metrics.getMetrics().getTMax(), metrics.getMetrics().getTMean(), metrics.getMetrics().getRhMin(), metrics.getMetrics().getRhMax());
-
         log.info("Plant {} daily ETC: {}", plant.getId(), dailyEtc);
+        log.info("Plant {} daily ETC using radiation measured by sensor: {}", plant.getId(), dailyEtcMeasuredRadiation);
 
         double accumulatedEtc = plant.getEtc() + dailyEtc;
 

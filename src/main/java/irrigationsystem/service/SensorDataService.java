@@ -6,10 +6,7 @@ import irrigationsystem.repository.SensorDataRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.DoubleSummaryStatistics;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,14 +38,19 @@ public class SensorDataService {
                     Collectors.collectingAndThen(Collectors.toList(), list -> {
 
                         DoubleSummaryStatistics tStats = list.stream()
-                            .filter(m -> MeasureTypeEnum.Temperature.name().equals(m.getMeasureType()))
+                            .filter(x -> MeasureTypeEnum.Temperature.name().equals(x.getMeasureType()))
                             .mapToDouble(ControllerSensorData::getValue)
                             .summaryStatistics();
 
                         DoubleSummaryStatistics rhStats = list.stream()
-                            .filter(m -> MeasureTypeEnum.Humidity.name().equals(m.getMeasureType()))
+                            .filter(x -> MeasureTypeEnum.Humidity.name().equals(x.getMeasureType()))
                             .mapToDouble(ControllerSensorData::getValue)
                             .summaryStatistics();
+
+                        List<LightData> lightData = list.stream()
+                            .filter(x -> MeasureTypeEnum.Light.name().equals(x.getMeasureType()))
+                            .map(x -> new LightData(x.getValue(), x.getCreationDate()))
+                            .toList();
 
                         ControllerSensorData first = list.get(0);
 
@@ -56,14 +58,14 @@ public class SensorDataService {
                             first.getControllerId(),
                             first.getAltitude(),
                             first.getLatitude(),
+                            lightData,
                             new Metrics(
                                 tStats.getCount() > 0 ? tStats.getMin() : 0,
                                 tStats.getCount() > 0 ? tStats.getMax() : 0,
                                 tStats.getCount() > 0 ? tStats.getAverage() : 0,
                                 rhStats.getCount() > 0 ? rhStats.getMin() : 0,
                                 rhStats.getCount() > 0 ? rhStats.getMax() : 0
-                            )
-                        );
+                            ));
                     })
                 ));
 

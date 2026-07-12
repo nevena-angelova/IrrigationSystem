@@ -1,7 +1,15 @@
 package irrigationsystem.analyzer;
 
-import java.time.LocalDate;
+import irrigationsystem.model.ControllerMetrics;
+import irrigationsystem.model.LightData;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+import java.time.Duration;
+import java.util.List;
+
+@Slf4j
+@RequiredArgsConstructor
 public class EvapotranspirationCalculator {
 
     private static final double ALPHA = 0.23;
@@ -10,69 +18,59 @@ public class EvapotranspirationCalculator {
     private static final double K_RS = 0.16;
     private static final double GAMMA = 0.063;
     private static final double U2 = 2.0;
+    private static final double LUX_TO_W_M2 = 0.0079;
+
+    private static double tMin; // temperature at 24h [°C]
+    private static double tMax; // temperature at 24h [°C]
+    private static double tMean; // temperature at 24h [°C]
+    private static double rhMin; // 24h min humidity [0-100%]
+    private static double rhMax; // 24h max humidity [0-100%]
+    private static double latitude; // latitude in degrees
+    private static double altitude; // altitude [m]
+    private static List<LightData> lightData;
+
+    public EvapotranspirationCalculator(ControllerMetrics controllerMetrics) {
+        tMin = controllerMetrics.getMetrics().getTMin();
+        tMax = controllerMetrics.getMetrics().getTMax();
+        tMean = controllerMetrics.getMetrics().getTMean();
+        rhMin = controllerMetrics.getMetrics().getRhMin();
+        rhMax = controllerMetrics.getMetrics().getRhMax();
+        latitude = controllerMetrics.getLatitude();
+        altitude = controllerMetrics.getAltitude();
+        lightData = controllerMetrics.getLightData();
+    }
 
     /**
      * Calculate evapotranspiration ETc [mm/day]
-     * @param tMin temperature at 24h [°C]
-     * @param tMax temperature at 24h [°C]
-     * @param tMean temperature at 24h [°C]
-     * @param rhMin 24h min humidity [0-100%]
-     * @param rhMax 24h max humidity [0-100%]
-     * @param latitude latitude in degrees
-     * @param altitude altitude [m]
+     *
      * @param dayOfYear day of the year
-     * @param kc Kc factor for the crop
+     * @param kc        Kc factor for the crop
      * @return
      */
-    public static double calculateETc(
-        double tMin, double tMax, double tMean,
-        double rhMin, double rhMax,
-        double latitude,
-        double altitude,
-        int dayOfYear,
-        double kc
-    ) {
+    public double calculateETc(int dayOfYear, double kc, boolean isRadiationMeasurement) {
 
-        double et0 = calculateET0(
-            tMin, tMax, tMean,
-            rhMin, rhMax,
-            latitude,
-            altitude,
-            dayOfYear
-        );
+        double et0 = calculateET0(dayOfYear, isRadiationMeasurement);
 
         return kc * et0;
     }
 
     /**
      * Reference evapotranspiration from Penman-Monteith equation ET0 [mm/day]
-     * @param tMin 24-hour min temperature [°C]
-     * @param tMax 24-hour max temperature [°C]
-     * @param tMean 24-hour mean temperature [°C]
-     * @param rhMin 24-hour min humidity [0-100%]
-     * @param rhMax 24-hour max humidity [0-100%]
-     * @param latitude latitude in degrees
-     * @param altitude altitude [m]
+     *
      * @param j day of the year
      * @return ET0
      */
-    public static double calculateET0(
-        double tMin, double tMax, double tMean,
-        double rhMin, double rhMax,
-        double latitude,
-        double altitude,
-        int j
-    ) {
+    public double calculateET0(int j, boolean isRadiationMeasurement) {
 
-        double es = saturationVaporPressure(tMax, tMin);
-        double ea = actualVaporPressure(tMax, tMin, rhMax, rhMin);
+        double es = saturationVaporPressure();
+        double ea = actualVaporPressure();
 
-        double delta = slopeVaporPressureCurve(tMean);
+        double delta = slopeVaporPressureCurve();
 
-        double ra = extraterrestrialRadiation(latitude, j);
-        double rs = solarRadiation(tMax, tMin, ra);
-        double rso = clearSkyRadiation(altitude, ra);
-        double rnl = netLongwaveRadiation(tMax, tMin, ea, rs, rso);
+        double ra = extraterrestrialRadiation(j);
+        double rs = isRadiationMeasurement ? solarRadiationUsingMeasurement() : solarRadiation(ra);
+        double rso = clearSkyRadiation(ra);
+        double rnl = netLongwaveRadiation(ea, rs, rso);
         double rn = (1 - ALPHA) * rs - rnl;
 
         double g = 0;
@@ -93,31 +91,25 @@ public class EvapotranspirationCalculator {
      * @param temperature temperature [°C]
      * @return saturation vapor pressure
      */
-    private static double saturationVaporPressureAtTemperature(double temperature) {
+    private double saturationVaporPressureAtTemperature(double temperature) {
         return 0.6108 * Math.exp((17.27 * temperature) / (temperature + 237.3));
     }
 
     /**
      * Saturation vapour pressure es [kPa]
      *
-     * @param tMax 24-hour max temperature [°C]
-     * @param tMin 24-hour min temperature [°C]
      * @return Saturation vapor pressure es [kPa]
      */
-    private static double saturationVaporPressure(double tMax, double tMin) {
+    private double saturationVaporPressure() {
         return (saturationVaporPressureAtTemperature(tMax) + saturationVaporPressureAtTemperature(tMin)) / 2.0;
     }
 
     /**
      * Actual vapor pressure ea [kPa]
      *
-     * @param tMax  24-hour max temperature [°C]
-     * @param tMin  24-hour min temperature [°C]
-     * @param rhMax 24-hour max humidity [0-100%]
-     * @param rhMin 24-hour min humidity [0-100%]
      * @return
      */
-    private static double actualVaporPressure(double tMax, double tMin, double rhMax, double rhMin) {
+    private double actualVaporPressure() {
         double eTmin = saturationVaporPressureAtTemperature(tMin);
         double eTmax = saturationVaporPressureAtTemperature(tMax);
 
@@ -127,10 +119,9 @@ public class EvapotranspirationCalculator {
     /**
      * Delta (slope) of the vapor pressure curve
      *
-     * @param tMean 24-hour mean temperature
      * @return Delta
      */
-    private static double slopeVaporPressureCurve(double tMean) {
+    private double slopeVaporPressureCurve() {
         double e0 = saturationVaporPressureAtTemperature(tMean);
 
         return (4098.0 * e0) / Math.pow(tMean + 237.3, 2);
@@ -138,40 +129,69 @@ public class EvapotranspirationCalculator {
 
     /**
      * Solar radiation Rs [MJ/m²/day⁻¹] (Hargreaves-Samani)
-     * @param tMax 24-hour max temperature
-     * @param tMin 24-hour min temperature
+     *
      * @param ra extraterrestrial radiation [MJ/m²/day]
      * @return Rs
      */
-    private static double solarRadiation(double tMax, double tMin, double ra) {
-        return K_RS * Math.sqrt(tMax - tMin) * ra;
+    private static double solarRadiation(double ra) {
+
+        double sr = K_RS * Math.sqrt(tMax - tMin) * ra;
+
+        log.info("Solar radiation: {}", sr);
+
+        return sr;
+    }
+
+    /**
+     * Calculates incoming solar radiation (Rs) from BH1750 measurements.
+     *
+     * @return Rs [MJ/m²/day]
+     */
+    private static double solarRadiationUsingMeasurement() {
+
+        if (lightData.size() < 2) {
+            return 0.0;
+        }
+
+        double energyJ = 0.0;
+
+        for (int i = 0; i < lightData.size() - 1; i++) {
+
+            LightData current = lightData.get(i);
+            LightData next = lightData.get(i + 1);
+
+            long seconds = Duration.between(current.getCreationDate(), next.getCreationDate()).getSeconds();
+
+            double irradiance = current.getValue() * LUX_TO_W_M2;
+
+            energyJ += irradiance * seconds;
+        }
+
+        double sr = energyJ / 1_000_000.0;
+
+        log.info("Solar radiation using measurement: {}", sr);
+
+        return sr;
     }
 
     /**
      * Clear sky radiation Rso [MJ/m²/day⁻¹]
-     * @param altitude altitude [m]]
+     *
      * @param ra extraterrestrial radiation [MJ/m²/day]
      * @return Rso
      */
-    private static double clearSkyRadiation(double altitude, double ra) {
+    private static double clearSkyRadiation(double ra) {
         return (0.75 + 2e-5 * altitude) * ra;
     }
 
     /**
      * Net longwave radiation Rnl [MJ/m²/day]
      *
-     * @param tMax 24-hour max temperature [°C]
-     * @param tMin 24-hour min temperature [°C]
-     * @param ea   actual vapor pressure [kPa]
-     * @param rs   incoming solar radiation [MJ/m²/day]
+     * @param ea actual vapor pressure [kPa]
+     * @param rs incoming solar radiation [MJ/m²/day]
      * @return Rnl
      */
-    private static double netLongwaveRadiation(
-        double tMax,
-        double tMin,
-        double ea,
-        double rs,
-        double rso) {
+    private static double netLongwaveRadiation(double ea, double rs, double rso) {
 
         double tKmax = tMax + 273.16;
         double tKmin = tMin + 273.16;
@@ -187,12 +207,12 @@ public class EvapotranspirationCalculator {
     }
 
     /**
-     *  Extraterrestrial radiation Ra [MJ/m²/day]
-     * @param latitude latitude in degrees
+     * Extraterrestrial radiation Ra [MJ/m²/day]
+     *
      * @param j day of the year
      * @return Ra
      */
-    private static double extraterrestrialRadiation(double latitude, int j) {
+    private static double extraterrestrialRadiation(int j) {
 
         double latRad = Math.toRadians(latitude);
 

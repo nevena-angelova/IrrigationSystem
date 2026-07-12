@@ -16,7 +16,7 @@ The lifecycle consists of several phases.
 public abstract class Lifecycle {
 
     protected final PlantType plantType;
-    private final ResourceBundle messages = ResourceBundle.getBundle("messages");
+    private final ResourceBundle messages = ResourceBundle.getBundle("messages_bg");
 
     protected Lifecycle(PlantType plantType) {
         this.plantType = plantType;

@@ -7,21 +7,13 @@ import java.time.LocalDate;
 
 public class IrrigationCalculator {
 
-    public static double calculateEvapotranspiration(ControllerMetrics controllerMetrics, GrowthPhase growthPhase) {
+    public static double calculateEvapotranspiration(ControllerMetrics controllerMetrics, GrowthPhase growthPhase, boolean isRadiationMeasurement) {
 
         double cropCoefficient = growthPhase.getCropCoefficient();
 
-        double etC = EvapotranspirationCalculator.calculateETc(
-            controllerMetrics.getMetrics().getTMin(),
-            controllerMetrics.getMetrics().getTMax(),
-            controllerMetrics.getMetrics().getTMean(),
-            controllerMetrics.getMetrics().getRhMin(),
-            controllerMetrics.getMetrics().getRhMax(),
-            controllerMetrics.getLatitude(),
-            controllerMetrics.getAltitude(),
-            LocalDate.now().getDayOfYear(),
-            cropCoefficient
-        );
+        EvapotranspirationCalculator calculator = new EvapotranspirationCalculator(controllerMetrics);
+
+        double etC = calculator.calculateETc(LocalDate.now().getDayOfYear(), cropCoefficient, isRadiationMeasurement);
 
         return etC;
     }
