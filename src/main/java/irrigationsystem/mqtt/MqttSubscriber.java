@@ -38,8 +38,6 @@ public class MqttSubscriber {
     private String topic;
 
     private static final String CLIENT_ID = "JavaSpringClient";
-
-    private final NotificationController notificationController;
     private final SensorRepository sensorRepository;
     private final SensorDataRepository sensorDataRepository;
 
