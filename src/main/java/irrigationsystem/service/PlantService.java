@@ -79,13 +79,6 @@ public class PlantService {
         return ResponseDto.<List<PlantReportDto>>builder().value(plantReport).build();
     }
 
-    public ResponseDto<String> irrigate(long controllerId, int relayId, int irrigationDuration) {
-        String topic = "garden/" + controllerId + "/relay/" + relayId;
-        mqttPublisher.publish(topic, String.format("{\"relayId\":%d,\"irrigationDuration\":\"%d\"}", relayId, irrigationDuration));
-
-        return ResponseDto.<String>builder().value("Relay ON command sent to controller " + controllerId).build();
-    }
-
     private Plant createNewPlant(CreatePlantDto createPlantDto) {
         Plant plant = new Plant();
         plant.setPlantTypeId(createPlantDto.getPlantTypeId());
@@ -128,7 +121,7 @@ public class PlantService {
     }
 
     private List<PlantReportDto> getPlantReport(Long userId) {
-        List<PlantSensorData> plantSensorData = sensorDataService.getLatestPlantSoilMoistureSensorData(userId);
+        List<PlantSensorData> plantSensorData = sensorDataService.getLatestPlantSensorData(userId);
 
         /*
         Group measures by PlantId, then for each group create a PlantReportDto with the latest measure values and an analysis report.

@@ -18,7 +18,7 @@ public class SensorDataService {
         this.sensorDataRepository = sensorDataRepository;
     }
 
-    public List<PlantSensorData> getLatestPlantSoilMoistureSensorData(Long userId) {
+    public List<PlantSensorData> getLatestPlantSensorData(Long userId) {
         List<PlantSensorData> plantSensorData = sensorDataRepository.getLatestValuesByUserId(userId);
         return plantSensorData;
     }
@@ -72,9 +72,9 @@ public class SensorDataService {
         return result;
     }
 
-    public List<PlantSoilMoistureData> getLatestPlantSoilMoistureSensorData() {
+    public List<PlantSoilMoistureData> getLatestPlantSensorData() {
 
-        List<PlantSoilMoistureData> data = sensorDataRepository.getPlantSensorData(MeasureTypeEnum.SoilMoisture.getValue());
+        List<PlantSoilMoistureData> data = sensorDataRepository.getPlantSoilMoistureSensorData(MeasureTypeEnum.SoilMoisture.getValue());
 
         return data == null ? Collections.emptyList() : data;
     }

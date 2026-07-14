@@ -33,6 +33,18 @@ public class JwtFilter extends OncePerRequestFilter {
         this.jwtUtil = jwtUtil;
     }
 
+    /**
+     * Processes incoming HTTP requests to filter and validate JSON Web Tokens (JWTs).
+     * This method extracts the JWT from the "Authorization" header, validates it,
+     * and sets the authentication in the security context if valid. If the token
+     * is invalid or expired, appropriate HTTP error responses are returned.
+     *
+     * @param request the {@link HttpServletRequest} containing the client's request
+     * @param response the {@link HttpServletResponse} to send a response or error back to the client
+     * @param filterChain the {@link FilterChain} to pass the request and response
+     *        to the next entity in the filter chain
+     * @throws IOException if an I/O error occurs during request or response handling
+     */
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws IOException {
 

@@ -29,9 +29,10 @@ public abstract class Analyzer {
 
     protected void analyzeCommonRules() {
 
-        if (sensorValues.getSoilMoisture() < growthPhase.getMinSoilMoisture()) {
-            report.setNeedsIrrigation(true);
-        }
+        report.setTemperature(sensorValues.getTemperature());
+        report.setHumidity(sensorValues.getHumidity());
+        report.setSoilMoisture(sensorValues.getSoilMoisture());
+        report.setLight(sensorValues.getLight());
 
         if (sensorValues.getSoilMoisture() > growthPhase.getMaxSoilMoisture()) {
             addReportWarning(getSoilTooWetWarning());

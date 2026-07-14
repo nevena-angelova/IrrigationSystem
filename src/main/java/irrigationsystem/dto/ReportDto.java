@@ -13,10 +13,6 @@ public class ReportDto {
     @Getter
     private long plantId;
 
-    @Setter
-    @Getter
-    private boolean needsIrrigation;
-
     @Getter
     @Setter
     private String growthPhaseName;
@@ -39,6 +35,18 @@ public class ReportDto {
 
     @Setter
     @Getter
+    private double Temperature;
+
+    @Setter
+    @Getter
+    private double Humidity;
+
+    @Setter
+    @Getter
+    private double Light;
+
+    @Setter
+    @Getter
     private double cropCoefficient;
 
     @Getter
@@ -46,7 +54,6 @@ public class ReportDto {
 
     public ReportDto(Long plantId, GrowthPhase growthPhase) {
         this.plantId = plantId;
-        this.needsIrrigation = false;
         this.warnings = new ArrayList<>();
         this.minSoilMoisture = growthPhase.getMinSoilMoisture();
         this.maxSoilMoisture = growthPhase.getMaxSoilMoisture();

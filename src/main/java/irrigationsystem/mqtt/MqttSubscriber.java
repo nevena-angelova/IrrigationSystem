@@ -3,7 +3,6 @@ package irrigationsystem.mqtt;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import irrigationsystem.cache.CacheService;
-import irrigationsystem.controller.NotificationController;
 import irrigationsystem.entity.*;
 import irrigationsystem.repository.MeasureTypeRepository;
 import irrigationsystem.repository.SensorDataRepository;

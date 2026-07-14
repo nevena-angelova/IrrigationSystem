@@ -56,7 +56,7 @@ public class IrrigationService {
             return;
         }
 
-        List<PlantSoilMoistureData> sensorData = sensorDataService.getLatestPlantSoilMoistureSensorData();
+        List<PlantSoilMoistureData> sensorData = sensorDataService.getLatestPlantSensorData();
 
         if (sensorData.isEmpty()) {
             return;

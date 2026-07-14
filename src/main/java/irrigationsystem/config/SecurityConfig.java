@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -39,6 +40,14 @@ public class SecurityConfig {
         this.jwtFilter = jwtFilter;
     }
 
+    /**
+     * Creates and configures an {@link AuthenticationProvider} for application security.
+     * The method sets up a {@link DaoAuthenticationProvider} that uses the provided
+     * {@link UserDetailsService} for loading user-specific data and a password encoder
+     * for verifying user credentials.
+     *
+     * @return the configured {@link AuthenticationProvider} instance
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -46,6 +55,18 @@ public class SecurityConfig {
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
+
+    /**
+     * Configures the security filter chain for the application.
+     * This method sets up various security configurations, including disabling CSRF,
+     * configuring session management as stateless, enabling CORS, disabling form login,
+     * specifying URL patterns to permit without authentication, and setting up JWT-based
+     * authentication filters.
+     *
+     * @param http the {@link HttpSecurity} object used to configure HTTP security settings
+     * @return the configured {@link SecurityFilterChain} instance
+     * @throws Exception if an error occurs during the configuration
+     */
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

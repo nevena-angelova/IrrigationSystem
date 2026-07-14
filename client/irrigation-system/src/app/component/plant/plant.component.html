@@ -1,34 +1,36 @@
 <section class="form-card " aria-label="Create new Plant form">
-  <form id="create-plant-form" (ngSubmit)="createPlant()" novalidate>
+  <form id="create-plant-form" (ngSubmit)="createPlant()" class="row g-3 align-items-end" novalidate>
     <h3>Добавяне на нова култура</h3>
-    <div class="d-flex align-items-end gap-2 mb-4">
+    <div class="col-md-6">
       <label for="planting-date" class="me-2 mb-0">Дата на засаждане:</label>
       <input type="date" id="planting-date" class="form-control"
              [(ngModel)]="selectedDate" name="planting-date" required>
     </div>
-    <div class="d-flex align-items-end gap-2 mb-4">
+    <div class="col-md-6">
       <label for="plant-type" class="me-2 mb-0">Тип култура:</label>
       <select id="plant-type" [(ngModel)]="selectedPlantType" name="plant-type" required aria-required="true">
         <option *ngFor="let type of plantTypes" [value]="type.id">{{ type.name }}</option>
       </select>
     </div>
-    <div class="d-flex align-items-end gap-2 mb-4">
+    <div class="col-md-3">
       <label for="controllerId" class="me-2 mb-0">Контролер:</label>
       <input type="number" [(ngModel)]="controllerId" name="controllerId" class="form-control">
     </div>
-    <div class="d-flex align-items-end gap-2 mb-4">
+    <div class="col-md-3">
       <label for="distanceX" class="me-2 mb-0">Разстояние между растенията</label>
       <input type="number" [(ngModel)]="distanceX" name="distanceX" class="form-control">
     </div>
-    <div class="d-flex align-items-end gap-2 mb-4">
+    <div class="col-md-3">
   <label for="distanceY" class="me-2 mb-0">Разстояние между лехите</label>
       <input type="number" [(ngModel)]="distanceY" name="distanceY" class="form-control">
     </div>
-    <div class="d-flex align-items-end gap-2 mb-4">
+    <div class="col-md-3">
       <label for="emitter-flow" class="me-2 mb-0">Литра на час за растение</label>
       <input type="number" [(ngModel)]="emitterFlow" name="emitter-flow" class="form-control">
     </div>
-    <button type="submit">Добави</button>
+    <div>
+      <button type="submit">Добави</button>
+    </div>
   </form>
 </section>
 <section class="cards-container" aria-label="Plant irrigation status">
@@ -38,14 +40,10 @@
     <p *ngIf="hasReport(plant)" class="growth-stage">{{ plant.report.growthPhaseName }}</p>
     <p *ngIf="hasReport(plant)" class="growth-stage-details">{{ plant.report.growthPhaseDetails }}</p>
     <p class="planting-date">Засаждане: {{ plant.plantingDate | date: 'dd.MM.yyyy' }}</p>
-    <p *ngIf="hasReport(plant)" class="soil-moisture">Влажност на
-      почвата: {{ getSoilMoisture(plant) | number:'1.1-1' }}</p>
-    <div *ngIf="needsIrrigation(plant)" class="needs-irrigation">
-      Нужно е поливане
-      <button (click)="irrigate(plant.controllerId, plant.relayNumber, plant.report.irrigationDuration)"
-              class="irrigate-button">Полей
-      </button>
-    </div>
+    <p *ngIf="hasReport(plant)" class="temperature">Температура: {{ getTemperature(plant) | number:'1.1-1' }}</p>
+    <p *ngIf="hasReport(plant)" class="humidity">Влажност: {{ getHumidity(plant) | number:'1.1-1' }}</p>
+    <p *ngIf="hasReport(plant)" class="temperature">Осветеност: {{ getLight(plant) | number:'1.1-1' }}</p>
+    <p *ngIf="hasReport(plant)" class="soil-moisture">Влажност на почвата: {{ getSoilMoisture(plant) | number:'1.1-1' }}</p>
     <div *ngIf="hasWarnings(plant)" class="warning">
       <p *ngFor="let warning of plant.report.warnings">
         <span class="warning-icon" aria-hidden="true">⚠️</span>

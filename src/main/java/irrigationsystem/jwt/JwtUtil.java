@@ -38,6 +38,14 @@ public class JwtUtil {
         return username.equals(userDetails.getUsername()) && !isExpired(token);
     }
 
+    /**
+     * Creates a JwtBuilder, sets the claims, username, issue date,
+     * expiration date, signing key, and signature algorithm,
+     * then generates the JWT string.
+     * @param extraClaims
+     * @param userDetails
+     * @return Jwt string
+     */
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
             .setClaims(extraClaims)
@@ -61,6 +69,14 @@ public class JwtUtil {
         return claimsResolvers.apply(claims);
     }
 
+    /**
+     * Extracts the claims from the provided JSON Web Token (JWT).
+     * This method parses the token using a signing key to validate its authenticity
+     * and retrieves its claims payload.
+     *
+     * @param token the JWT string from which the claims are to be extracted
+     * @return the {@link Claims} object containing the embedded claims from the token
+     */
     private Claims extractClaims(String token) {
         return Jwts
             .parserBuilder()

@@ -22,6 +22,10 @@ public class PlantController {
         try {
             ResponseDto<List<PlantTypeDto>> result = plantService.getPlantTypes();
 
+            if (result.hasErrors()) {
+                return ResponseEntity.badRequest().body(result.getErrorMessage());
+            }
+
             return ResponseEntity.ok(result.getValue());
 
         } catch (Exception e) {
@@ -55,18 +59,6 @@ public class PlantController {
             if (result.hasErrors()) {
                 return ResponseEntity.badRequest().body(result.getErrorMessage());
             }
-
-            return ResponseEntity.ok(result.getValue());
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error");
-        }
-    }
-
-    @PostMapping("/irrigate/{deviceId}/{relayId}/{irrigationDuration}")
-    public ResponseEntity irrigate(@PathVariable Integer deviceId, @PathVariable Integer relayId, @PathVariable Integer irrigationDuration) {
-        try {
-            ResponseDto<String> result = plantService.irrigate(deviceId, relayId, irrigationDuration);
 
             return ResponseEntity.ok(result.getValue());
 

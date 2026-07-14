@@ -14,7 +14,7 @@ import java.util.List;
 public interface SensorDataRepository extends JpaRepository<SensorData, Long> {
 
     @Query(value = """
-        SELECT DISTINCT ON (sd.sensor_id, sd.measure_type_id)
+        SELECT DISTINCT ON (p.id, sd.sensor_id, sd.measure_type_id)
             p.id AS plant_id,
             p.plant_type_id,
             pt.name AS  plant_type_name,
@@ -24,17 +24,17 @@ public interface SensorDataRepository extends JpaRepository<SensorData, Long> {
             mt.name AS measure_type,
             sd.value,
             sd.creation_date,
-            d.id AS device_id,
+            c.id AS device_id,
             p.area_number
         FROM plants p
         JOIN plant_sensors ps ON p.id = ps.plant_id
         JOIN sensors s ON s.id = ps.sensor_id
-        JOIN controllers d ON d.id = s.controller_id
+        JOIN controllers c ON c.id = s.controller_id
         JOIN sensor_data sd ON sd.sensor_id = s.id
         JOIN plant_types pt ON pt.id = p.plant_type_id
         JOIN measure_types mt ON mt.id = sd.measure_type_id
-        WHERE d.user_id = :userId
-        ORDER BY sd.sensor_id, sd.measure_type_id, sd.creation_date DESC;
+        WHERE c.user_id = :userId
+        ORDER BY p.id, sd.sensor_id, sd.measure_type_id, sd.creation_date DESC;
         """, nativeQuery = true)
     List<PlantSensorData> getLatestValuesByUserId(@Param("userId") Long userId);
 
@@ -56,10 +56,7 @@ public interface SensorDataRepository extends JpaRepository<SensorData, Long> {
           AND sd.measure_type_id <> :soilMoistureTypeId
         ORDER BY sd.creation_date DESC
         """, nativeQuery = true)
-    List<ControllerSensorData> getDataFrom(
-        @Param("from") LocalDateTime from,
-        @Param("soilMoistureTypeId") Integer soilMoistureTypeId
-    );
+    List<ControllerSensorData> getDataFrom(@Param("from") LocalDateTime from, @Param("soilMoistureTypeId") Integer soilMoistureTypeId);
 
     @Query(value = """
         SELECT DISTINCT ON (sd.sensor_id)
@@ -72,7 +69,5 @@ public interface SensorDataRepository extends JpaRepository<SensorData, Long> {
         WHERE sd.measure_type_id = :soilMoistureTypeId
         ORDER BY sd.sensor_id, sd.creation_date DESC;
         """, nativeQuery = true)
-    List<PlantSoilMoistureData> getPlantSensorData(
-        @Param("soilMoistureTypeId") Integer soilMoistureTypeId
-    );
+    List<PlantSoilMoistureData> getPlantSoilMoistureSensorData(@Param("soilMoistureTypeId") Integer soilMoistureTypeId);
 }

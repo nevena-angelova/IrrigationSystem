@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,12 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final Mapper mapper;
 
+    /**
+     * Create a new user, attach controller with default sensors to the user object,
+     * generate Jwt Token
+     * @param userDto
+     * @return Jwt Token
+     */
     @Transactional
     public ResponseDto<JwtResponse> register(UserDto userDto) {
 
@@ -79,14 +86,20 @@ public class AuthenticationService {
             .build();
     }
 
+    /**
+     * Sign in a user - check username and password,
+     * generate a Jwt token
+     * @param userDto
+     * @return Jwt token
+     */
     public ResponseDto<JwtResponse> login(UserDto userDto) {
         try {
           /*
-          Check user in the database, it is configured to filter using UserService
+          Check user in the database, using UserService
            */
-            var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword()));
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword()));
 
-            var user = (User) authentication.getPrincipal();
+            User user = (User) authentication.getPrincipal();
 
             JwtResponse jwtResponse = new JwtResponse(jwtUtil.generateToken(user));
 
@@ -98,6 +111,11 @@ public class AuthenticationService {
         }
     }
 
+    /**
+     * Create a User object
+     * @param userDto
+     * @return User object
+     */
     private User createUser(UserDto userDto){
         User user = new User();
         user.setUsername(userDto.getUsername());

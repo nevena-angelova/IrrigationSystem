@@ -93,12 +93,20 @@ export class PlantComponent implements OnInit {
     });
   }
 
-  needsIrrigation(plant: Plant) {
-    return plant.report?.needsIrrigation;
-  }
-
   hasWarnings(plant: Plant) {
     return plant.report?.warnings.length > 0;
+  }
+
+  getTemperature(plant: Plant) {
+    return plant.report.temperature;
+  }
+
+  getHumidity(plant: Plant) {
+    return plant.report.humidity;
+  }
+
+  getLight(plant: Plant) {
+    return plant.report.light;
   }
 
   getSoilMoisture(plant: Plant) {
@@ -135,12 +143,5 @@ export class PlantComponent implements OnInit {
         plant.icon = '';
         break;
     }
-  }
-
-    irrigate(deviceId: number, relayNumber: number, irrigationDuration: number) {
-    this.plantService.irrigate(deviceId, relayNumber, irrigationDuration).subscribe({
-      next: () => this.getPlants(),
-      error: (err) => console.error('Error creating Plant:', err)
-    });
   }
 }
