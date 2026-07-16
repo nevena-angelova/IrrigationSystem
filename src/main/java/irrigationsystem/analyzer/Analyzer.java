@@ -16,12 +16,7 @@ public abstract class Analyzer {
     protected final ReportDto report;
     private final ResourceBundle messages = ResourceBundle.getBundle("messages", new Locale("bg"));
 
-
-    protected Analyzer(
-        Long plantId,
-        SensorValues sensorValues,
-        GrowthPhase growthPhase
-    ) {
+    protected Analyzer(Long plantId, SensorValues sensorValues, GrowthPhase growthPhase) {
         this.sensorValues = sensorValues;
         this.growthPhase = growthPhase;
         this.report = new ReportDto(plantId, growthPhase);

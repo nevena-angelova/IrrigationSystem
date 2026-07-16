@@ -2,7 +2,6 @@ package irrigationsystem.mqtt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import irrigationsystem.cache.CacheService;
 import irrigationsystem.entity.*;
 import irrigationsystem.repository.MeasureTypeRepository;
 import irrigationsystem.repository.SensorDataRepository;
@@ -29,7 +28,6 @@ public class MqttSubscriber {
 
     private static final ObjectMapper mapper = new ObjectMapper();
     private final MeasureTypeRepository measureTypeRepository;
-    private final CacheService cacheService;
 
     @Value("${mqtt.broker}")
     private String broker;
@@ -156,7 +154,6 @@ public class MqttSubscriber {
                 }
             }
         }
-
         return sensorData;
     }
 

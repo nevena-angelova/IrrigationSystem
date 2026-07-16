@@ -19,12 +19,12 @@ public class MqttPublisher {
 
     public void publish(String topic, String payload) {
         String clientId = "SpringPublisher";
-        try (MqttClient mqttClient = new MqttClient(broker, clientId, new MemoryPersistence())) {
-            mqttClient.connect();
+        try (MqttClient client = new MqttClient(broker, clientId, new MemoryPersistence())) {
+            client.connect();
             MqttMessage message = new MqttMessage(payload.getBytes());
             message.setQos(1); /* Set Quality of Service level - 1: broker should send back confirmation of receipt, if not, it will be resent */
-            mqttClient.publish(topic, message);
-            mqttClient.disconnect();
+            client.publish(topic, message);
+            client.disconnect();
             log.info("Published: {} topic: {}", payload, topic);
         } catch (MqttException e) {
             log.error("MQTT publish failed: {}", e.getMessage());
