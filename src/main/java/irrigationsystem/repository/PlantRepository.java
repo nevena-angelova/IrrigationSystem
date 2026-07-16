@@ -7,10 +7,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface PlantRepository extends JpaRepository<Plant, Long> {
     @Query(value = """
-        SELECT COUNT(DISTINCT ps.plant_id) AS total_plants
-        FROM plant_sensors ps
-        JOIN sensors s ON ps.sensor_id = s.id
-        WHERE s.controller_id = :controllerId;
+        SELECT COUNT(DISTINCT s.plant_id) AS total_plants
+        FROM sensors s
+        WHERE s.controller_id = :controllerId AND s.plant_id IS NOT NULL;
         """, nativeQuery = true)
     int getPlantCount(@Param("controllerId") Integer controllerId);
 }

@@ -28,7 +28,7 @@ public class Sensor {
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private Controller controller;
 
-    @Getter
-    @ManyToMany(mappedBy = "sensors")
-    private List<Plant> plants = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "plant_id")
+    private Plant plant;
 }

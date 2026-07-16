@@ -17,7 +17,7 @@ public interface SensorDataRepository extends JpaRepository<SensorData, Long> {
         SELECT DISTINCT ON (p.id, sd.sensor_id, sd.measure_type_id)
             p.id AS plant_id,
             p.plant_type_id,
-            pt.name AS  plant_type_name,
+            pt.name AS plant_type_name,
             p.planting_date,
             sd.sensor_id,
             sd.measure_type_id,
@@ -27,9 +27,10 @@ public interface SensorDataRepository extends JpaRepository<SensorData, Long> {
             c.id AS device_id,
             p.area_number
         FROM plants p
-        JOIN plant_sensors ps ON p.id = ps.plant_id
-        JOIN sensors s ON s.id = ps.sensor_id
-        JOIN controllers c ON c.id = s.controller_id
+        JOIN sensors ps ON ps.plant_id = p.id
+        JOIN controllers c ON c.id = ps.controller_id
+        JOIN sensors s ON s.controller_id = c.id
+            AND (s.plant_id = p.id OR s.plant_id IS NULL)
         JOIN sensor_data sd ON sd.sensor_id = s.id
         JOIN plant_types pt ON pt.id = p.plant_type_id
         JOIN measure_types mt ON mt.id = sd.measure_type_id

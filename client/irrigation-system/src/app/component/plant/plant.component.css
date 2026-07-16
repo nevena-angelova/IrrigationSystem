@@ -49,6 +49,10 @@ button {
 
 .no-water {color: red;}
 
+.warning {
+  color: #F08000;
+}
+
 .irrigate-button {
   background-color: #93e4aa;
   max-width: 70px;
@@ -89,7 +93,20 @@ button {
   margin-bottom: 1.4rem;
 }
 
+.growth-stage-details {
+  color: #064e3b;
+}
+
 @keyframes wave {
   0% { left: -40%; }
   100% { left: 100%; }
+}
+
+.planting-date{
+  font-weight: bold;
+}
+
+.plant-metrics p {
+  display: inline-block;
+  margin-right: 10px;
 }

@@ -43,16 +43,10 @@ public class Plant {
     @Column(name = "area_number")
     private int areaNumber;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-        name = "plant_sensors",
-        joinColumns = @JoinColumn(name = "plant_id"),
-        inverseJoinColumns = @JoinColumn(name = "sensor_id")
-    )
+    @OneToMany(mappedBy = "plant")
     private List<Sensor> sensors = new ArrayList<>();
 
     public void addSensor(Sensor sensor) {
         this.sensors.add(sensor);
-        sensor.getPlants().add(this);
     }
 }

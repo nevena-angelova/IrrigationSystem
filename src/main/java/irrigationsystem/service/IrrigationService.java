@@ -1,6 +1,6 @@
 package irrigationsystem.service;
 
-import irrigationsystem.analyzer.IrrigationCalculator;
+import irrigationsystem.calculator.IrrigationCalculator;
 import irrigationsystem.cache.CacheService;
 import irrigationsystem.entity.GrowthPhase;
 import irrigationsystem.entity.Plant;

@@ -21,7 +21,7 @@
       <input type="number" [(ngModel)]="distanceX" name="distanceX" class="form-control">
     </div>
     <div class="col-md-3">
-  <label for="distanceY" class="me-2 mb-0">Разстояние между лехите</label>
+      <label for="distanceY" class="me-2 mb-0">Разстояние между лехите</label>
       <input type="number" [(ngModel)]="distanceY" name="distanceY" class="form-control">
     </div>
     <div class="col-md-3">
@@ -38,12 +38,19 @@
     <div class="plant-icon" aria-hidden="true">{{ plant.icon }}</div>
     <h3 class="plant-name">{{ plant.plantType.name }}</h3>
     <p *ngIf="hasReport(plant)" class="growth-stage">{{ plant.report.growthPhaseName }}</p>
+    <p class="planting-date">Засаждане: {{ plant.plantingDate | date: 'dd.MM.yyyy' }} г.</p>
     <p *ngIf="hasReport(plant)" class="growth-stage-details">{{ plant.report.growthPhaseDetails }}</p>
-    <p class="planting-date">Засаждане: {{ plant.plantingDate | date: 'dd.MM.yyyy' }}</p>
-    <p *ngIf="hasReport(plant)" class="temperature">Температура: {{ getTemperature(plant) | number:'1.1-1' }}</p>
-    <p *ngIf="hasReport(plant)" class="humidity">Влажност: {{ getHumidity(plant) | number:'1.1-1' }}</p>
-    <p *ngIf="hasReport(plant)" class="temperature">Осветеност: {{ getLight(plant) | number:'1.1-1' }}</p>
-    <p *ngIf="hasReport(plant)" class="soil-moisture">Влажност на почвата: {{ getSoilMoisture(plant) | number:'1.1-1' }}</p>
+    <div class="plant-metrics">
+      <p *ngIf="hasReport(plant)" class="temperature">Температура: <b>{{ getTemperature(plant) | number:'1.1-1' }}
+        °C </b></p>
+      <p *ngIf="hasReport(plant)" class="humidity">Влажност: <b>{{ getHumidity(plant) }}%</b></p>
+      <p *ngIf="hasReport(plant)" class="temperature">Осветеност: <b>{{ getLight(plant) | number:'1.1-1' }} lx</b></p>
+      <p *ngIf="hasReport(plant)" class="soil-moisture">Влажност на почвата: <b>{{ getSoilMoisture(plant) }}%</b></p>
+      <p *ngIf="hasReport(plant)" class="soil-moisture">Минимална влажност на почвата:
+        <b>{{ getMinSoilMoisture(plant) }}%</b></p>
+      <p *ngIf="hasReport(plant)" class="soil-moisture">Максимална влажност на почвата:
+        <b>{{ getMaxSoilMoisture(plant) }}%</b></p>
+    </div>
     <div *ngIf="hasWarnings(plant)" class="warning">
       <p *ngFor="let warning of plant.report.warnings">
         <span class="warning-icon" aria-hidden="true">⚠️</span>

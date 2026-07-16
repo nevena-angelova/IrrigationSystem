@@ -53,11 +53,18 @@ public class PlantService {
 
         Plant plant = createNewPlant(createPlantDto);
 
-        attachSensors(plant, controller);
-
         setAreaNumber(plant, controller.getId());
 
-        plantRepository.save(plant);
+        Plant savedPlant = plantRepository.save(plant);
+
+        Sensor soilMoistureSensor = getSoilMoistureSensor();
+
+        soilMoistureSensor.setController(controller);
+        soilMoistureSensor.setPlant(savedPlant);
+
+        savedPlant.addSensor(soilMoistureSensor);
+
+        sensorRepository.save(soilMoistureSensor);
 
         return ResponseDto.<String>builder().value("Plant created successfully").build();
     }
@@ -90,22 +97,14 @@ public class PlantService {
         return plant;
     }
 
-    /**
-     * Every plant has several sensors attached.
-     * Each sensor has a type and each type can measure one or two parameters
-     */
-    private void attachSensors(Plant plant, Controller controller) {
-
-        List<Sensor> defaultSensors = sensorRepository.findBySensorTypeNameIn(List.of(SensorTypeEnum.DHT22.getValue(), SensorTypeEnum.BH1750.getValue()));
-        defaultSensors.forEach(plant::addSensor);
+    private Sensor getSoilMoistureSensor() {
 
         SensorType soilMoistureType = sensorTypeRepository.findByNameIn(List.of(SensorTypeEnum.SOIL_MOISTURE.getValue())).getFirst();
 
         Sensor soilMoistureSensor = new Sensor();
         soilMoistureSensor.setSensorType(soilMoistureType);
-        soilMoistureSensor.setController(controller);
 
-        plant.addSensor(soilMoistureSensor);
+        return soilMoistureSensor;
     }
 
     private Optional<Long> getUserId() {

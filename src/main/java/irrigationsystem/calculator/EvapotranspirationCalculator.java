@@ -1,4 +1,4 @@
-package irrigationsystem.analyzer;
+package irrigationsystem.calculator;
 
 import irrigationsystem.model.ControllerMetrics;
 import irrigationsystem.model.LightData;

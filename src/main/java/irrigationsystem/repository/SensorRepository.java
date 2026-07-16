@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface SensorRepository extends JpaRepository<Sensor, Integer> {
-    @EntityGraph(attributePaths = {"plants", "sensorType"})
+    @EntityGraph(attributePaths = {"plant", "sensorType"})
     List<Sensor> findByControllerId(Integer controllerId);
 
-    List<Sensor> findBySensorTypeNameIn (List<String> names);
+    List<Sensor> findByControllerIdAndSensorTypeNameIn (Integer controllerId, List<String> names);
 }

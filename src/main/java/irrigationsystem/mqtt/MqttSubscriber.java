@@ -131,7 +131,7 @@ public class MqttSubscriber {
 
     private List<SensorData> getSensorData(List<Sensor> sensors, double temperature, double humidity, double light, List<Double> soilMoisture) {
         List<SensorData> sensorData = new ArrayList<>();
-
+        int soilMoistureIndex = 0;
         for (Sensor sensor : sensors) {
             List<MeasureType> types = measureTypeRepository.findBySensorTypes_Id(sensor.getSensorType().getId());
 
@@ -146,8 +146,9 @@ public class MqttSubscriber {
                     } else if (measureType == MeasureTypeEnum.Light) {
                         sensorData.add(createSensorData(sensor, light, type));
                     } else if (measureType == MeasureTypeEnum.SoilMoisture) {
-                        for (int i = 0; i < soilMoisture.size(); i++) {
-                            sensorData.add(createSensorData(sensor, soilMoisture.get(i), type));
+                        if (soilMoistureIndex < soilMoisture.size()) {
+                            sensorData.add(createSensorData(sensor, soilMoisture.get(soilMoistureIndex), type));
+                            soilMoistureIndex++;
                         }
                     }
                 } catch (IllegalArgumentException e) {
