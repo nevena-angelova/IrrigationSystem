@@ -88,8 +88,8 @@ public class SeedDataConfig implements CommandLineRunner {
 
         Controller controller = new Controller();
         controller.setNumber(1);
-        controller.setLatitude(42.697778); // Sofia
-        controller.setAltitude(550);
+        controller.setLatitude(42.4729);
+        controller.setAltitude(632);
         controller.setUser(admin);
 
         controller = controllerRepository.save(controller);

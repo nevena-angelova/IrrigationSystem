@@ -3,9 +3,7 @@ package irrigationsystem.mqtt;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import irrigationsystem.entity.*;
-import irrigationsystem.repository.MeasureTypeRepository;
-import irrigationsystem.repository.SensorDataRepository;
-import irrigationsystem.repository.SensorRepository;
+import irrigationsystem.service.SensorDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -18,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PreDestroy;
 
-import java.time.OffsetDateTime;
+
 import java.util.*;
 
 @Slf4j
@@ -26,8 +24,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class MqttSubscriber {
 
+    private final SensorDataService sensorDataService;
     private static final ObjectMapper mapper = new ObjectMapper();
-    private final MeasureTypeRepository measureTypeRepository;
 
     @Value("${mqtt.broker}")
     private String broker;
@@ -36,8 +34,7 @@ public class MqttSubscriber {
     private String topic;
 
     private static final String CLIENT_ID = "JavaSpringClient";
-    private final SensorRepository sensorRepository;
-    private final SensorDataRepository sensorDataRepository;
+
 
     private MqttClient client;
 
@@ -84,21 +81,7 @@ public class MqttSubscriber {
                         }
                     }
 
-                    /*
-                    Get sensors for a controller
-                     */
-                    List<Sensor> sensors = sensorRepository.findByControllerId(controllerId);
-                    if (sensors == null || sensors.isEmpty()) {
-                        log.warn("No sensors found for controller {}", controllerId);
-                        return;
-                    }
-
-                    List<SensorData> sensorData = getSensorData(sensors, temperature, humidity, light, soilMoistureValues);
-
-                    /*
-                     Bulk save data in database
-                     */
-                    sensorDataRepository.saveAll(sensorData);
+                    sensorDataService.saveSensorData(controllerId, temperature, humidity, light, soilMoistureValues);
 
                 } catch (Exception e) {
                     log.error("Error processing MQTT message", e);
@@ -127,42 +110,4 @@ public class MqttSubscriber {
         }
     }
 
-    private List<SensorData> getSensorData(List<Sensor> sensors, double temperature, double humidity, double light, List<Double> soilMoisture) {
-        List<SensorData> sensorData = new ArrayList<>();
-        int soilMoistureIndex = 0;
-        for (Sensor sensor : sensors) {
-            List<MeasureType> types = measureTypeRepository.findBySensorTypes_Id(sensor.getSensorType().getId());
-
-            for (MeasureType type : types) {
-                try {
-                    MeasureTypeEnum measureType = MeasureTypeEnum.valueOf(type.getName());
-
-                    if (measureType == MeasureTypeEnum.Temperature) {
-                        sensorData.add(createSensorData(sensor, temperature, type));
-                    } else if (measureType == MeasureTypeEnum.Humidity) {
-                        sensorData.add(createSensorData(sensor, humidity, type));
-                    } else if (measureType == MeasureTypeEnum.Light) {
-                        sensorData.add(createSensorData(sensor, light, type));
-                    } else if (measureType == MeasureTypeEnum.SoilMoisture) {
-                        if (soilMoistureIndex < soilMoisture.size()) {
-                            sensorData.add(createSensorData(sensor, soilMoisture.get(soilMoistureIndex), type));
-                            soilMoistureIndex++;
-                        }
-                    }
-                } catch (IllegalArgumentException e) {
-                    log.warn("Unknown measure type: {}", type.getName());
-                }
-            }
-        }
-        return sensorData;
-    }
-
-    private SensorData createSensorData(Sensor sensor, double value, MeasureType measureType) {
-        SensorData data = new SensorData();
-        data.setSensor(sensor);
-        data.setValue(value);
-        data.setTimestamp(OffsetDateTime.now());
-        data.setMeasureType(measureType);
-        return data;
-    }
 }
