@@ -62,10 +62,9 @@ public interface SensorDataRepository extends JpaRepository<SensorData, Long> {
     @Query(value = """
         SELECT DISTINCT ON (sd.sensor_id)
             s.controller_id,
-            ps.plant_id,
+            s.plant_id,
             sd.value as soil_moisture
-        FROM plant_sensors ps
-        JOIN sensors  s ON s.id = ps.sensor_id
+        FROM sensors s
         JOIN sensor_data sd ON s.id = sd.sensor_id
         WHERE sd.measure_type_id = :soilMoistureTypeId
         ORDER BY sd.sensor_id, sd.creation_date DESC;
