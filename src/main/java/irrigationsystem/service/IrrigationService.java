@@ -2,15 +2,20 @@ package irrigationsystem.service;
 
 import irrigationsystem.calculator.IrrigationCalculator;
 import irrigationsystem.cache.CacheService;
+import irrigationsystem.entity.Controller;
+import irrigationsystem.entity.EtcStatistic;
 import irrigationsystem.entity.GrowthPhase;
 import irrigationsystem.entity.Plant;
 import irrigationsystem.model.ControllerMetrics;
 import irrigationsystem.model.PlantSoilMoistureData;
+import irrigationsystem.repository.ControllerRepository;
+import irrigationsystem.repository.EtcStatisticRepository;
 import irrigationsystem.repository.PlantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -25,6 +30,8 @@ public class IrrigationService {
     private final SensorDataService sensorDataService;
     private final MqttService mqttService;
     private final PlantRepository plantRepository;
+    private final EtcStatisticRepository etcStatisticRepository;
+    private final ControllerRepository controllerRepository;
     private final CacheService cacheService;
 
 
@@ -56,7 +63,7 @@ public class IrrigationService {
             return;
         }
 
-        List<PlantSoilMoistureData> sensorData = sensorDataService.getLatestPlantSensorData();
+        List<PlantSoilMoistureData> sensorData = sensorDataService.getPlantSoilMoistureSensorData();
 
         if (sensorData.isEmpty()) {
             return;
@@ -101,6 +108,8 @@ public class IrrigationService {
         log.info("Plant {} daily ETC: {}", plant.getId(), dailyEtc);
         log.info("Plant {} daily ETC using radiation measured by sensor: {}", plant.getId(), dailyEtcMeasuredRadiation);
 
+        addEtcStatistics(plant, metrics, dailyEtc);
+
         double accumulatedEtc = plant.getEtc() + dailyEtc;
 
         log.info("Plant {} accumulated ETC: {}", plant.getId(), accumulatedEtc);
@@ -140,5 +149,20 @@ public class IrrigationService {
             controllerId,
             duration
         );
+    }
+
+    private void addEtcStatistics(Plant plant, ControllerMetrics metrics, double dailyEtc){
+        EtcStatistic etcStatistic = new EtcStatistic();
+        etcStatistic.setDate(LocalDate.now(ZoneOffset.UTC));
+        etcStatistic.setTMin(metrics.getMetrics().getTMin());
+        etcStatistic.setTMax(metrics.getMetrics().getTMax());
+        etcStatistic.setTMean(metrics.getMetrics().getTMean());
+        etcStatistic.setRhMin(metrics.getMetrics().getRhMin());
+        etcStatistic.setRhMax(metrics.getMetrics().getRhMax());
+        etcStatistic.setPlant(plant);
+        etcStatistic.setControllerId(metrics.getControllerId());
+        etcStatistic.setEtc(dailyEtc);
+
+        etcStatisticRepository.save(etcStatistic);
     }
 }

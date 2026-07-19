@@ -120,7 +120,7 @@ public class PlantService {
     }
 
     private List<PlantReportDto> getPlantReport(Long userId) {
-        List<PlantSensorData> plantSensorData = sensorDataService.getLatestPlantSensorData(userId);
+        List<PlantSensorData> plantSensorData = sensorDataService.getPlantSoilMoistureSensorData(userId);
 
         /*
         Group measures by PlantId, then for each group create a PlantReportDto with the latest measure values and an analysis report.

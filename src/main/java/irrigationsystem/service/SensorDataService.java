@@ -25,7 +25,7 @@ public class SensorDataService {
     private final SensorDataRepository sensorDataRepository;
     private final SensorRepository sensorRepository;
 
-    public List<PlantSensorData> getLatestPlantSensorData(Long userId) {
+    public List<PlantSensorData> getPlantSoilMoistureSensorData(Long userId) {
         List<PlantSensorData> plantSensorData = sensorDataRepository.getLatestValuesByUserId(userId);
         return plantSensorData;
     }
@@ -79,7 +79,7 @@ public class SensorDataService {
         return result;
     }
 
-    public List<PlantSoilMoistureData> getLatestPlantSensorData() {
+    public List<PlantSoilMoistureData> getPlantSoilMoistureSensorData() {
 
         List<PlantSoilMoistureData> data = sensorDataRepository.getPlantSoilMoistureSensorData(MeasureTypeEnum.SoilMoisture.getValue());
 

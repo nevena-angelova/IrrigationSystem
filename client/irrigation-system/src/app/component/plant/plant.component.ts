@@ -10,7 +10,7 @@ import {Subscription} from 'rxjs';
 import {RingComponent} from '../../shared/ring/ring.component';
 
 @Component({
-  selector: 'app-Plant',
+  selector: 'app-plant',
   imports: [
     FormsModule,
     NgForOf,

@@ -81,7 +81,6 @@ public class SecurityConfig {
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html",
-                    "/notification/**",
                     "/ws/**", "ws/info/**").permitAll()
                 .anyRequest().authenticated())
             //.httpBasic(withDefaults())

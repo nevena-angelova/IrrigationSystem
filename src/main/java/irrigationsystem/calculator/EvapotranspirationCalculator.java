@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -149,22 +150,32 @@ public class EvapotranspirationCalculator {
      */
     private static double solarRadiationUsingMeasurement() {
 
-        if (lightData.size() < 2) {
+        if (lightData == null || lightData.size() < 2) {
             return 0.0;
         }
 
+        List<LightData> sortedData = lightData.stream()
+            .sorted(Comparator.comparing(LightData::getCreationDate))
+            .toList();
+
         double energyJ = 0.0;
 
-        for (int i = 0; i < lightData.size() - 1; i++) {
+        for (int i = 0; i < sortedData.size() - 1; i++) {
 
-            LightData current = lightData.get(i);
-            LightData next = lightData.get(i + 1);
+            LightData current = sortedData.get(i);
+            LightData next = sortedData.get(i + 1);
 
             long seconds = Duration.between(current.getCreationDate(), next.getCreationDate()).getSeconds();
 
-            double irradiance = current.getValue() * LUX_TO_W_M2;
+            double lux1 = current.getValue();
+            double lux2 = next.getValue();
 
-            energyJ += irradiance * seconds;
+            double irradiance1 = lux1 * LUX_TO_W_M2;
+            double irradiance2 = lux2 * LUX_TO_W_M2;
+
+            double averageIrradiance = (irradiance1 + irradiance2) / 2.0;
+
+            energyJ += averageIrradiance * seconds;
         }
 
         double sr = energyJ / 1_000_000.0;

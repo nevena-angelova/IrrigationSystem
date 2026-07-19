@@ -81,7 +81,7 @@ public class MqttSubscriber {
                         }
                     }
 
-                    sensorDataService.saveSensorData(controllerId, temperature, humidity, light, soilMoistureValues);
+                  //  sensorDataService.saveSensorData(controllerId, temperature, humidity, light, soilMoistureValues);
 
                 } catch (Exception e) {
                     log.error("Error processing MQTT message", e);
