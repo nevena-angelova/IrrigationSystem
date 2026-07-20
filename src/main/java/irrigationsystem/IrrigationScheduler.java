@@ -16,7 +16,7 @@ public class IrrigationScheduler {
      */
     //@Scheduled(fixedRate = 60000)
     @Scheduled(cron = "0 0 4 * * *", zone = "UTC")
-    public void checkAndWaterPlants() {
+    public void analyzeAndIrrigatePlants() {
         irrigationService.processDailyIrrigation();
     }
 }

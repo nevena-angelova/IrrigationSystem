@@ -90,7 +90,7 @@ public class SensorDataService {
          /*
          Get sensors for a controller
           */
-        List<Sensor> sensors = sensorRepository.findByControllerId(controllerId);
+        List<Sensor> sensors = sensorRepository.findByControllerIdOrderByIdAsc(controllerId);
         if (sensors == null || sensors.isEmpty()) {
             log.warn("No sensors found for controller {}", controllerId);
             return;

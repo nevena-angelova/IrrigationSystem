@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface SensorRepository extends JpaRepository<Sensor, Integer> {
     @EntityGraph(attributePaths = {"plant", "sensorType"})
-    List<Sensor> findByControllerId(Integer controllerId);
+    List<Sensor> findByControllerIdOrderByIdAsc(Integer controllerId);
 }
