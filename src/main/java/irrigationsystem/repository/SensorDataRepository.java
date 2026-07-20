@@ -54,10 +54,10 @@ public interface SensorDataRepository extends JpaRepository<SensorData, Long> {
         JOIN sensor_data sd ON s.id = sd.sensor_id
         JOIN measure_types mt ON mt.id = sd.measure_type_id
         WHERE sd.creation_date >= :from
-          AND sd.measure_type_id <> :soilMoistureTypeId
+          AND s.plant_id IS NULL
         ORDER BY sd.creation_date DESC
         """, nativeQuery = true)
-    List<ControllerSensorData> getDataFrom(@Param("from") LocalDateTime from, @Param("soilMoistureTypeId") Integer soilMoistureTypeId);
+    List<ControllerSensorData> getCommonSensorDataFrom(@Param("from") LocalDateTime from);
 
     @Query(value = """
         SELECT DISTINCT ON (sd.sensor_id)

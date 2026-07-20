@@ -23,7 +23,7 @@ export class AuthenticationComponent {
 
   authFormSubmit(user: User) {
     this.authenticationService.authenticate(user, this.login ? 'login' : 'register' ).subscribe({
-      next: (data) => this.router.navigate(['/Plant']),
+      next: (data) => this.router.navigate(['/plant']),
       error: (err) => console.error('Error loading data', err)
     });
   }

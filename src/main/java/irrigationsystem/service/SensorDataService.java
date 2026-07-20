@@ -32,7 +32,7 @@ public class SensorDataService {
 
     public Map<Integer, ControllerMetrics> getControllerMetrics(LocalDateTime from) {
 
-        List<ControllerSensorData> controllerSensorData = sensorDataRepository.getDataFrom(from, MeasureTypeEnum.SoilMoisture.getValue());
+        List<ControllerSensorData> controllerSensorData = sensorDataRepository.getCommonSensorDataFrom(from);
 
         if (controllerSensorData == null || controllerSensorData.isEmpty()) {
             return Collections.emptyMap();

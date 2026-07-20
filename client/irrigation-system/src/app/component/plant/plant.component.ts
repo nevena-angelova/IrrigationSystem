@@ -5,8 +5,6 @@ import {DatePipe, DecimalPipe, NgForOf, NgIf} from '@angular/common';
 import {Plant} from '../../model/plant.model';
 import {CreatePlant} from '../../model/create-plant.model';
 import {Report} from '../../model/report.model';
-import {WebSocketService} from '../../service/websocket.service';
-import {Subscription} from 'rxjs';
 import {RingComponent} from '../../shared/ring/ring.component';
 
 @Component({
@@ -27,7 +25,6 @@ export class PlantComponent implements OnInit {
   selectedPlantType: number | undefined;
   selectedDate: Date = new Date();
   plants: Plant[] = [];
-  reportSubscription: Subscription | undefined;
   report: Report = new Report();
 
   controllerId: number = 1;
@@ -36,7 +33,7 @@ export class PlantComponent implements OnInit {
   emitterFlow: number = 0;
 
 
-  constructor(private plantService: PlantService, private cdRef: ChangeDetectorRef, private webSocketService: WebSocketService) {
+  constructor(private plantService: PlantService, private cdRef: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
@@ -46,19 +43,6 @@ export class PlantComponent implements OnInit {
     });
 
     this.getPlants();
-
-
-    // Subscribe to messages from the WebSocket
-    this.reportSubscription = this.webSocketService.getMessages().subscribe(
-      (report) => {
-        this.report = report;
-        const plant = this.plants.find(p => p.id === report.plantId);
-        if (plant) {
-          plant.report = report;
-          this.cdRef.detectChanges(); // Optional if NgZone is used in WebSocketService
-        }
-      }
-    );
   }
 
   getPlants() {
