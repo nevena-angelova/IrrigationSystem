@@ -1,0 +1,30 @@
+<section class="etc-statistics">
+  <table class="table table-bordered table-striped">
+    <thead class="table-dark">
+    <tr>
+      <th>Номер на контролер</th>
+      <th>Вид растение</th>
+      <th>Дата</th>
+      <th>T min</th>
+      <th>T max</th>
+      <th>T mean</th>
+      <th>RH min</th>
+      <th>RH max</th>
+      <th>ETc</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let statistic of etcStatistics">
+      <td>{{ statistic.controllerId }}</td>
+      <td>{{ statistic.plantType }}</td>
+      <td>{{ statistic.date }}</td>
+      <td>{{ statistic.tmin }}</td>
+      <td>{{ statistic.tmax }}</td>
+      <td>{{ statistic.tmean | number:'1.1-1' }}</td>
+      <td>{{ statistic.rhMin }}</td>
+      <td>{{ statistic.rhMax }}</td>
+      <td>{{ statistic.etc }}</td>
+    </tr>
+    </tbody>
+  </table>
+</section>
