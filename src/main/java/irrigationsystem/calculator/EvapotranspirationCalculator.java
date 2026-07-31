@@ -69,8 +69,8 @@ public class EvapotranspirationCalculator {
         double delta = slopeVaporPressureCurve();
 
         double ra = extraterrestrialRadiation(j);
-        double rs = isRadiationMeasurement ? solarRadiationUsingMeasurement() : solarRadiation(ra);
         double rso = clearSkyRadiation(ra);
+        double rs = isRadiationMeasurement ? solarRadiationUsingMeasurement() : solarRadiation(ra, rso);
         double rnl = netLongwaveRadiation(ea, rs, rso);
         double rn = (1 - ALPHA) * rs - rnl;
 
@@ -97,9 +97,10 @@ public class EvapotranspirationCalculator {
     }
 
     /**
-     * Saturation vapour pressure es [kPa]
+     * Calculates the average saturation vapor pressure (es) [kPa] based on the minimum
+     * (tMin) and maximum (tMax) temperatures.
      *
-     * @return Saturation vapor pressure es [kPa]
+     * @return the average saturation vapor pressure [kPa]
      */
     private double saturationVaporPressure() {
         return (saturationVaporPressureAtTemperature(tMax) + saturationVaporPressureAtTemperature(tMin)) / 2.0;
@@ -110,6 +111,16 @@ public class EvapotranspirationCalculator {
      *
      * @return
      */
+
+    /**
+     * Calculates the actual vapor pressure (ea) [kPa] based on the minimum and maximum relative
+     * humidity (rhMin and rhMax) and the saturation vapor pressures at minimum and maximum
+     * temperatures (tMin and tMax).
+     *
+     * @return the actual vapor pressure [kPa]
+     */
+
+
     private double actualVaporPressure() {
         double eTmin = saturationVaporPressureAtTemperature(tMin);
         double eTmax = saturationVaporPressureAtTemperature(tMax);
@@ -118,9 +129,10 @@ public class EvapotranspirationCalculator {
     }
 
     /**
-     * Delta (slope) of the vapor pressure curve
+     * Calculates the slope of the saturation vapor pressure curve delta (Δ) [kPa/°C]
+     * at the mean air temperature (tMean).
      *
-     * @return Delta
+     * @return the slope of the saturation vapor pressure curve [kPa/°C]
      */
     private double slopeVaporPressureCurve() {
         double e0 = saturationVaporPressureAtTemperature(tMean);
@@ -134,9 +146,13 @@ public class EvapotranspirationCalculator {
      * @param ra extraterrestrial radiation [MJ/m²/day]
      * @return Rs
      */
-    private static double solarRadiation(double ra) {
+    private static double solarRadiation(double ra, double rso) {
 
         double sr = K_RS * Math.sqrt(tMax - tMin) * ra;
+
+        if (sr > rso) {
+            sr = rso;
+        }
 
         log.info("Solar radiation: {}", sr);
 
@@ -218,11 +234,14 @@ public class EvapotranspirationCalculator {
     }
 
     /**
-     * Extraterrestrial radiation Ra [MJ/m²/day]
+     * Calculates the extraterrestrial radiation Ra [MJ/m²/day] for a given day of the year.
+     * This method is based on the position of the Earth relative to the sun and
+     * considers latitude and solar declination to determine radiation values.
      *
-     * @param j day of the year
-     * @return Ra
+     * @param j the day of the year (1-365)
+     * @return the extraterrestrial radiation [MJ/m²/day]
      */
+
     private static double extraterrestrialRadiation(int j) {
 
         double latRad = Math.toRadians(latitude);

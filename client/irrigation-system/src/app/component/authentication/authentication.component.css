@@ -14,7 +14,7 @@
 /* Left side - info panel */
 .auth-info {
   flex: 1.2;
-  background: var(--mint-form-bg) url('/assets/irrigation-system.jpeg') no-repeat center center;
+  background: var(--mint-form-bg) url('/assets/irrigation-system.jpg') no-repeat center center;
   background-size: cover; /* or contain depending on your design */
   color: var( --dark-text);
   padding: 3rem 2.5rem;
