@@ -31,7 +31,6 @@ public class IrrigationService {
     private final MqttService mqttService;
     private final PlantRepository plantRepository;
     private final EtcStatisticRepository etcStatisticRepository;
-    private final ControllerRepository controllerRepository;
     private final CacheService cacheService;
 
 
@@ -102,11 +101,11 @@ public class IrrigationService {
         GrowthPhase growthPhase = cacheService.getGrowthPhase(plant.getPlantingDate(), plant.getPlantTypeId());
 
         double dailyEtc = IrrigationCalculator.calculateEvapotranspiration(metrics, growthPhase, false);
-        double dailyEtcMeasuredRadiation = IrrigationCalculator.calculateEvapotranspiration(metrics, growthPhase, true);
+        //double dailyEtcMeasuredRadiation = IrrigationCalculator.calculateEvapotranspiration(metrics, growthPhase, true);
 
         log.info("Plant {} Soil moisture: {}, Metrics: tMin {}, tMax {}, tMean {}, rhMin {}, rhMax {}", plant.getId(), data.getSoilMoisture(), metrics.getMetrics().getTMin(), metrics.getMetrics().getTMax(), metrics.getMetrics().getTMean(), metrics.getMetrics().getRhMin(), metrics.getMetrics().getRhMax());
         log.info("Plant {} daily ETC: {}", plant.getId(), dailyEtc);
-        log.info("Plant {} daily ETC using radiation measured by sensor: {}", plant.getId(), dailyEtcMeasuredRadiation);
+        //log.info("Plant {} daily ETC using radiation measured by sensor: {}", plant.getId(), dailyEtcMeasuredRadiation);
 
         addEtcStatistics(plant, metrics, dailyEtc);
 
@@ -144,14 +143,14 @@ public class IrrigationService {
         mqttService.irrigate(controllerId, plant.getAreaNumber(), duration);
 
         log.info(
-            "Irrigating plant {}, controller {} for {} seconds",
+            "Irrigating plant {}, controller {} for {} minutes",
             plant.getId(),
             controllerId,
             duration
         );
     }
 
-    private void addEtcStatistics(Plant plant, ControllerMetrics metrics, double dailyEtc){
+    private void addEtcStatistics(Plant plant, ControllerMetrics metrics, double dailyEtc) {
         EtcStatistic etcStatistic = new EtcStatistic();
         etcStatistic.setDate(LocalDate.now(ZoneOffset.UTC));
         etcStatistic.setTMin(metrics.getMetrics().getTMin());
