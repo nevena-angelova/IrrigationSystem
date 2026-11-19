@@ -10,8 +10,6 @@ plant's relay. A web app shows each plant's live readings, growth phase, health 
 **Front end:** Angular 19 (standalone components) with Bootstrap.
 **Device:** ESP32 firmware (Arduino) for the sensors and the irrigation relays.
 
-![Garden irrigation](client/irrigation-system/public/irrigation-system1.jpeg)
-
 ## Features
 
 **Automatic irrigation**
@@ -35,6 +33,19 @@ plant's relay. A web app shows each plant's live readings, growth phase, health 
 **Statistics**
 - **ETc history:** daily min, max and mean temperature, min and max humidity, and ETc for every plant.
 
+## Screenshots
+
+The user interface is in Bulgarian.
+
+**Crops:** add a plant and see each plant's growth phase, care advice, latest readings and warnings. The
+ring shows where the current soil moisture sits between the phase's minimum and maximum.
+
+![Crops page with tomato and carrot cards](docs/screenshots/plants.png)
+
+| Sign in | Statistics |
+|---------|------------|
+| ![Sign-in page](docs/screenshots/login.webp) | ![Daily ETc and climate history table](docs/screenshots/statistics.png) |
+
 ## Tech stack
 
 | Layer     | Technology                                                                       |
@@ -45,22 +56,13 @@ plant's relay. A web app shows each plant's live readings, growth phase, health 
 | Messaging | MQTT: Eclipse Paho (server), PubSubClient (ESP32)                                |
 | Caching   | Spring Cache with Caffeine                                                       |
 | Front end | Angular 19: standalone components, RxJS, route guards, HTTP interceptor, Bootstrap 5 / ng-bootstrap |
-| Device    | ESP32, DHT temperature/humidity sensor, BH1750 light sensor, capacitive soil-moisture sensors, relay module |
+| Device    | ESP32, DHT11 temperature/humidity sensor, BH1750 light sensor, capacitive soil-moisture sensors, relay module |
 | Testing   | JUnit 5 and Mockito (back end), Karma and Jasmine (front end)                    |
 | API docs  | springdoc-openapi (Swagger UI)                                                   |
 
 ## Architecture and design highlights
 
-```mermaid
-flowchart LR
-    S[Sensors] --> E[ESP32]
-    E --> R[Relays / valves]
-    E -- "garden/{id}/sensors" --> B((MQTT broker))
-    B -- "garden/{id}/relay/{area}" --> E
-    B <--> API[Spring Boot API]
-    API <--> DB[(PostgreSQL)]
-    UI[Angular app] -- REST + JWT --> API
-```
+![System architecture: ESP32 with sensors and relays, Mosquitto MQTT broker, Spring Boot server, PostgreSQL, and web and mobile clients](docs/architecture.webp)
 
 ```
 IrrigationSystem/
@@ -97,17 +99,69 @@ IrrigationSystem/
 - **Seeded on startup:** measure types, sensor types, crops and their growth phases are created on the
   first run.
 
+## Irrigation algorithm
+
+`IrrigationService` runs on a schedule. For each plant it:
+
+1. gets the weather data for the last 24 hours from the plant's controller (min, max and mean
+   temperature; min and max humidity; light);
+2. gets the plant's current soil moisture;
+3. finds the current growth phase from the days since planting;
+4. calculates the reference evapotranspiration ET₀ (FAO‑56 Penman‑Monteith);
+5. calculates the crop evapotranspiration ETc = ET₀ × Kc, using the growth phase's crop coefficient, and
+   stores it in the daily statistics;
+6. compares soil moisture with the phase's minimum:
+   - **below the minimum:** it calculates the watering time from the ETc built up since the last
+     watering, sends the MQTT command to the relay, and resets the built-up ETc to zero;
+   - **at or above the minimum:** it adds today's ETc to the total so far.
+
+<p align="center">
+  <img src="docs/irrigation-algorithm.webp" alt="Server-side irrigation algorithm flowchart" width="360">
+</p>
+
+## Hardware
+
+The prototype has one ESP32 DevKit board. Its sensors and relay are wired as below; the relay switches
+the pump or valve for one irrigation zone.
+
+![ESP32 wiring with DHT11, BH1750, capacitive soil-moisture sensor and relay module](docs/hardware-wiring.webp)
+
+| Component                            | Measures / does                | ESP32 pin                  |
+|--------------------------------------|--------------------------------|----------------------------|
+| DHT11                                | Air temperature and humidity   | GPIO 4 (data)              |
+| BH1750                               | Light (lux), over I²C          | GPIO 21 (SDA), GPIO 22 (SCL) |
+| Capacitive soil-moisture sensor v1.2 | Soil moisture (analog)         | GPIO 32 (ADC), with a 100 nF capacitor on the signal line |
+| 1-channel relay module               | Turns the pump / valve on and off | GPIO 26 (IN)            |
+
+### ESP32 firmware
+
+At startup the firmware sets up the sensors, connects to Wi-Fi and configures the MQTT broker. The main
+loop then:
+
+1. checks the Wi-Fi and MQTT connections, and reconnects and subscribes to the relay topic again if
+   either has dropped;
+2. handles the relays: a relay turns on when a command arrives and turns off when its time runs out. The
+   timing uses `millis()`, so it never blocks the loop;
+3. every 30 minutes, reads all sensors, packs the values into one JSON message and publishes it over MQTT.
+
+![ESP32 firmware flowchart](docs/esp32-firmware-flow.webp)
+
+More soil sensors and relays can be added through the `soilSensorGPIOs` and `relayGPIOs` arrays in the
+sketch.
+
 ## Database schema
 
 - **`users`** have a **`roles`** entry and own one or more **`controllers`** (ESP32 boards with a
   latitude and altitude, which the ETc calculation uses).
-- **`sensors`** belong to a controller and have a **`sensor_types`** entry. Sensor types are linked to the
-  **`measure_types`** they report (temperature, humidity, light, soil moisture), and each reading is a row
-  in **`sensor_data`**.
+- **`sensors`** belong to a controller and have a **`sensor_types`** entry. **`sensor_measure_types`**
+  links each sensor type to the **`measure_types`** it reports (temperature, humidity, light, soil
+  moisture). Each reading is a row in **`sensor_data`** with a timestamp.
 - **`plants`** have a **`plant_types`** entry, spacing, dripper flow rate, irrigation zone (`area_number`)
-  and accumulated ETc. Each plant is linked to its soil-moisture sensor.
+  and accumulated ETc. A soil-moisture sensor points to its plant through `sensors.plant_id`.
 - **`growth_phases`** define day ranges, Kc and soil-moisture limits for each crop.
-- **`etc_statistic`** stores the daily climate summary and ETc for each plant.
+- **`etc_statistic`** stores the daily climate summary and ETc for each plant and controller.
+
+![Database schema](docs/database-schema.webp)
 
 ## Getting started
 

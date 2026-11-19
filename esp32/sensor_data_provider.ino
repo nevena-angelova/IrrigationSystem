@@ -53,8 +53,8 @@ const long CONTROLLER_ID = 1;
 // Publish timer
 
 unsigned long lastMsg = 0;
-//const long interval = 30UL * 60UL * 1000UL;  // 30 min
-const long interval = 10UL * 1000UL;
+const long interval = 30UL * 60UL * 1000UL;  // 30 min
+//const long interval = 10UL * 1000UL;  // 10 s, for testing
 
 // Handle incomming MQTT messages
 void callback(char* topic, byte* payload, unsigned int length) {
