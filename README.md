@@ -35,8 +35,6 @@ plant's relay. A web app shows each plant's live readings, growth phase, health 
 
 ## Screenshots
 
-The user interface is in Bulgarian.
-
 **Crops:** add a plant and see each plant's growth phase, care advice, latest readings and warnings. The
 ring shows where the current soil moisture sits between the phase's minimum and maximum.
 
